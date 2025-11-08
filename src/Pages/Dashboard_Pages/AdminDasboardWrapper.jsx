@@ -4,6 +4,7 @@ import { FaProjectDiagram, FaUsers, FaUsersCog } from "react-icons/fa";
 import Project from "../../Components/Admin_DashBoard_Components/Project";
 import Users from "../../Components/Admin_DashBoard_Components/Users";
 import Teams from "../../Components/Admin_DashBoard_Components/Teams";
+import Category from "../../Components/Admin_DashBoard_Components/Category"; 
 
 const AdminDasboardWrapper = () => {
   const [activeSection, setActiveSection] = useState("Project");
@@ -12,6 +13,7 @@ const AdminDasboardWrapper = () => {
     { name: "Project", icon: <FaProjectDiagram /> },
     { name: "Users", icon: <FaUsers /> },
     { name: "Teams", icon: <FaUsersCog /> },
+    { name: "Category", icon: <FaUsersCog /> },
   ];
 
   const renderContent = () => {
@@ -22,8 +24,10 @@ const AdminDasboardWrapper = () => {
         return <Users />;
       case "Teams":
         return <Teams />;
+    case "Category":
+        return <Category />;
       default:
-        return <Project />;
+        return <Category />;
     }
   };
 
