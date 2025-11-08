@@ -1,30 +1,54 @@
 import { Navigate, useLocation } from "react-router-dom";
 
 const ProtectedRoute = ({ children, allowedRole }) => {
-  const role = localStorage.getItem("role"); // e.g. "admin" or "employee"
+  const role = localStorage.getItem("role"); // stored after login
   const location = useLocation();
 
-  // If user is not logged in
+  const isLoginPage =
+    location.pathname === "/am-login" ||
+    location.pathname === "/et-login" ||
+    location.pathname === "/" ||
+    location.pathname === "/am_login";
+
+  // ✅ If user not logged in
   if (!role) {
-    // But trying to access login -> allow it
-    if (location.pathname === "/login" || location.pathname === "/") {
-      return children;
+    // Allow login pages
+    if (isLoginPage) return children;
+    // Redirect all others to main login
+    return <Navigate to="/et-login" replace />;
+  }
+
+  // ✅ If logged in user visits a login page again, redirect to their dashboard
+  if (isLoginPage) {
+    if (role === "Admin") return <Navigate to="/admin" replace />;
+    if (role === "Manager") return <Navigate to="/manager" replace />;
+    if (role === "TeamLeader") return <Navigate to="/TeamLeader" replace />;
+    if (role === "employee") return <Navigate to="/employee" replace />;
+  }
+
+  // ✅ Role-based protection
+  if (allowedRole) {
+    const normalizedAllowed = allowedRole.toLowerCase();
+    const normalizedRole = role.toLowerCase();
+
+    if (normalizedAllowed !== normalizedRole) {
+      // Unauthorized access → redirect user to their own dashboard
+      switch (normalizedRole) {
+        case "admin":
+          return <Navigate to="/admin" replace />;
+        case "manager":
+          return <Navigate to="/manager" replace />;
+        case "teamleader":
+          return <Navigate to="/TeamLeader" replace />;
+        case "employee":
+          return <Navigate to="/employee" replace />;
+        default:
+          return <Navigate to="/et-login" replace />;
+      }
     }
-    // Otherwise, redirect to login
-    return <Navigate to="/login" replace />;
   }
 
-  // If logged in and tries to access login page -> redirect to dashboard
-  if (location.pathname === "/login" || location.pathname === "/") {
-    return <Navigate to={`/${role}`} replace />;
-  }
-
-  // If role doesn't match allowed role -> redirect to their dashboard
-  if (allowedRole && role !== allowedRole) {
-    return <Navigate to={`/${role}`} replace />;
-  }
-
-  // Everything valid → render the protected component
+  // ✅ Authorized → render component
   return children;
 };
 
