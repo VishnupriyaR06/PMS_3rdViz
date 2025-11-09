@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
 
-const ETLogin = () => {
+const EmployeeLogin = () => {
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -18,24 +18,31 @@ const ETLogin = () => {
   const BASE_API = import.meta.env.VITE_API_URL;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
+  // ✅ Field-level validation
   const validateField = useCallback((name, value) => {
-    let error = "";
-    if (name === "email") {
-      if (!value) error = "Email is required.";
-      else if (!emailRegex.test(value)) error = "Enter a valid email.";
+    switch (name) {
+      case "email":
+        if (!value) return "Email is required.";
+        if (!emailRegex.test(value)) return "Enter a valid email address.";
+        break;
+      case "password":
+        if (!value) return "Password is required.";
+        if (value.length < 6) return "Password must be at least 6 characters.";
+        break;
+      case "role_type":
+        if (!value) return "Please select your role.";
+        break;
+      default:
+        return "";
     }
-    if (name === "password") {
-      if (!value) error = "Password is required.";
-      else if (value.length < 6) error = "Password must be at least 6 characters.";
-    }
-    if (name === "role_type" && !value) error = "Please select a role.";
-    return error;
+    return "";
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     const newValue = name === "email" ? value.toLowerCase() : value;
     setForm((prev) => ({ ...prev, [name]: newValue }));
+
     if (touched[name]) {
       setErrors((prev) => ({ ...prev, [name]: validateField(name, newValue) }));
     }
@@ -56,32 +63,27 @@ const ETLogin = () => {
     return Object.values(nextErrors).every((v) => !v);
   };
 
+  // ✅ Login Handler
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!validateAll()) return;
-    setLoading(true);
 
+    setLoading(true);
     try {
-      const res = await axios.post(`${BASE_API}/api/single_login/`, {
-        email: form.email,
-        password: form.password,
-        role_type: form.role_type,
-      });
+      const res = await axios.post(`${BASE_API}/api/single_login/`, form);
 
       if (res.status === 200) {
-        localStorage.setItem("role", res.data.role_type);
-        localStorage.setItem("userEmail", res.data.email);
+        const { role_type, email } = res.data;
+        localStorage.setItem("role", role_type);
+        localStorage.setItem("userEmail", email);
 
-        if (res.data.role_type === "employee") {
-          navigate("/employee");
-        } else if (res.data.role_type === "TeamLeader") {
-          navigate("/TeamLeader");
-        }
+        if (role_type === "employee") navigate("/employee");
+        else if (role_type === "TeamLeader") navigate("/team-leader");
       }
     } catch (err) {
       const message =
         err?.response?.data?.msg ||
-        "Login failed. Please check credentials.";
+        "Login failed. Please check your credentials.";
       setErrors({ form: message });
     } finally {
       setLoading(false);
@@ -91,8 +93,14 @@ const ETLogin = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-pink-500 to-orange-400 p-4">
       <div className="bg-white/20 backdrop-blur-xl rounded-2xl shadow-xl w-full max-w-md p-8 border border-white/30 text-white">
-        <h1 className="text-3xl font-bold text-center mb-4">Employee / Team Lead Login</h1>
+        <h1 className="text-4xl font-bold text-center mb-2">
+          Employee Login
+        </h1>
+        <p className="text-center text-white/80 mb-6 text-sm">
+          Sign in to access your workspace
+        </p>
 
+        {/* Form Error */}
         {errors.form && (
           <div className="mb-4 text-center text-sm text-red-200 bg-red-800/30 py-2 rounded">
             {errors.form}
@@ -102,7 +110,7 @@ const ETLogin = () => {
         <form onSubmit={handleLogin} noValidate>
           {/* Email */}
           <div className="mb-4">
-            <label className="block mb-1 font-medium text-white">Email</label>
+            <label className="block mb-1 font-medium">Email</label>
             <input
               name="email"
               type="email"
@@ -117,10 +125,10 @@ const ETLogin = () => {
             )}
           </div>
 
-          {/* Password */}
-          <div className="mb-4 relative">
-            <label className="block mb-1 font-medium text-white">Password</label>
-            <div className="relative">
+          {/* Password (with visible toggle icon) */}
+          <div className="mb-4">
+            <label className="block mb-1 font-medium">Password</label>
+            <div className="relative flex items-center">
               <input
                 name="password"
                 type={showPassword ? "text" : "password"}
@@ -128,14 +136,14 @@ const ETLogin = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder="Enter your password"
-                className="w-full p-3 rounded-lg bg-white/90 text-gray-800 focus:ring-2 focus:ring-pink-500 outline-none pr-10"
+                className="w-full p-3 rounded-lg bg-white/90 text-gray-800 focus:ring-2 focus:ring-pink-500 outline-none pr-12"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((s) => !s)}
-                className="absolute right-2 top-1/2 -translate-y-1/2"
+                className="absolute right-3 text-gray-700 hover:text-pink-500 transition z-10"
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
             {errors.password && touched.password && (
@@ -145,7 +153,7 @@ const ETLogin = () => {
 
           {/* Role Type */}
           <div className="mb-4">
-            <label className="block mb-1 font-medium text-white">Role Type</label>
+            <label className="block mb-1 font-medium">Role Type</label>
             <select
               name="role_type"
               value={form.role_type}
@@ -153,7 +161,7 @@ const ETLogin = () => {
               onBlur={handleBlur}
               className="w-full p-3 rounded-lg bg-white/90 text-gray-800 focus:ring-2 focus:ring-pink-500 outline-none"
             >
-              <option value="">Select role</option>
+              <option value="">Select Role</option>
               <option value="employee">Employee</option>
               <option value="TeamLeader">Team Leader</option>
             </select>
@@ -162,12 +170,12 @@ const ETLogin = () => {
             )}
           </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 bg-white text-pink-500 font-semibold rounded-lg hover:bg-pink-100 transition-all duration-300 ${
-              loading ? "opacity-70 cursor-not-allowed" : ""
-            }`}
+            className={`w-full py-3 bg-white text-pink-500 font-semibold rounded-lg hover:bg-pink-100 transition-all duration-300 ${loading ? "opacity-70 cursor-not-allowed" : ""
+              }`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
@@ -177,4 +185,4 @@ const ETLogin = () => {
   );
 };
 
-export default ETLogin;
+export default EmployeeLogin;

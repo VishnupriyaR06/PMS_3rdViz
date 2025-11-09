@@ -1,54 +1,39 @@
 import { Navigate, useLocation } from "react-router-dom";
 
-const ProtectedRoute = ({ children, allowedRole }) => {
-  const role = localStorage.getItem("role"); // stored after login
+const ProtectedRoute = ({ children, allowedRole, isLoginPage = false }) => {
+  const role = localStorage.getItem("role");
   const location = useLocation();
 
-  const isLoginPage =
-    location.pathname === "/am-login" ||
-    location.pathname === "/et-login" ||
-    location.pathname === "/" ||
-    location.pathname === "/am_login";
-
-  // ✅ If user not logged in
-  if (!role) {
-    // Allow login pages
-    if (isLoginPage) return children;
-    // Redirect all others to main login
-    return <Navigate to="/et-login" replace />;
+  // ✅ If it's a login page
+  if (isLoginPage) {
+    // If user is logged in → redirect to respective dashboard
+    if (role) {
+      const redirectMap = {
+        Admin: "/admin",
+        Manager: "/manager",
+        Employee: "/employee",
+      };
+      return <Navigate to={redirectMap[role] || "/employee"} replace />;
+    }
+    return children; // Not logged in → show login page
   }
 
-  // ✅ If logged in user visits a login page again, redirect to their dashboard
-  if (isLoginPage) {
-    if (role === "Admin") return <Navigate to="/admin" replace />;
-    if (role === "Manager") return <Navigate to="/manager" replace />;
-    if (role === "TeamLeader") return <Navigate to="/TeamLeader" replace />;
-    if (role === "employee") return <Navigate to="/employee" replace />;
+  // ✅ Not logged in → redirect to default login
+  if (!role) {
+    return <Navigate to="/employee-login" state={{ from: location }} replace />;
   }
 
   // ✅ Role-based protection
-  if (allowedRole) {
-    const normalizedAllowed = allowedRole.toLowerCase();
-    const normalizedRole = role.toLowerCase();
-
-    if (normalizedAllowed !== normalizedRole) {
-      // Unauthorized access → redirect user to their own dashboard
-      switch (normalizedRole) {
-        case "admin":
-          return <Navigate to="/admin" replace />;
-        case "manager":
-          return <Navigate to="/manager" replace />;
-        case "teamleader":
-          return <Navigate to="/TeamLeader" replace />;
-        case "employee":
-          return <Navigate to="/employee" replace />;
-        default:
-          return <Navigate to="/et-login" replace />;
-      }
-    }
+  if (allowedRole && role.toLowerCase() !== allowedRole.toLowerCase()) {
+    const redirectMap = {
+      Admin: "/admin",
+      Manager: "/manager",
+      Employee: "/employee",
+    };
+    return <Navigate to={redirectMap[role] || "/employee"} replace />;
   }
 
-  // ✅ Authorized → render component
+  // ✅ Authorized
   return children;
 };
 
