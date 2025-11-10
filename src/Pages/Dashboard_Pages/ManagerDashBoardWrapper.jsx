@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 // import Project from "/src/Components/Admin_DashBoard_Components/AdminProjectManagement";
 import ManagerTeam from "/src/Components/Manager_DashBoard_Components/Manager_Team";
 import Task from "/src/Components/Admin_DashBoard_Components/Task";
-// import ManagerProfile from "/src/Components/Manager_DashBoard_Components/Manager_Profile.jsx";
+import ManagerProfile from "/src/Components/Manager_DashBoard_Components/Manager_Profile.jsx";
 
 const ManagerDashboardWrapper = () => {
   const [activeSection, setActiveSection] = useState("ManagerTeam");
@@ -60,7 +60,7 @@ const ManagerDashboardWrapper = () => {
       // ),
       ManagerTeam: <ManagerTeam />,
       Task: <Task />,
-      // Profile: <ManagerProfile />,
+      Profile: <ManagerProfile />,
     };
 
     console.log("Manager navItems (before render):", navItems);
