@@ -137,7 +137,7 @@ export default function Category() {
 
     try {
       await axios.post(
-        "http://127.0.0.1:8000/api/category_create/",
+        "http://127.0.0.1:8000/api/category_create//",
         {
           name: categoryName,
           description: categoryDescription,
@@ -348,3 +348,180 @@ export default function Category() {
     </div>
   );
 }
+// import { useState, useEffect } from "react";
+// import axios from "axios";
+// import { motion, AnimatePresence } from "framer-motion";
+
+// export default function Category() {
+//   const [categoryName, setCategoryName] = useState("");
+//   const [categoryDescription, setCategoryDescription] = useState("");
+//   const [categories, setCategories] = useState([]);
+//   const [showModal, setShowModal] = useState(false);
+
+//   // ✅ Fetch categories
+//   const fetchCategories = async () => {
+//     try {
+//       const res = await axios.get("http://127.0.0.1:8000/api/Category_list/");
+//       setCategories(res.data); // backend sends array of categories
+//     } catch (err) {
+//       console.error("Error fetching categories:", err);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchCategories();
+//   }, []);
+
+//   // ✅ Submit category
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     if (!categoryName.trim() || !categoryDescription.trim()) {
+//       alert("Category name and description are required");
+//       return;
+//     }
+
+//     try {
+//       await axios.post(
+//         "http://127.0.0.1:8000/api/category_create/",
+//         {
+//           name: categoryName,
+//           description: categoryDescription,
+//         },
+//         {
+//           headers: { "Content-Type": "application/json" },
+//         }
+//       );
+
+//       // Reset fields
+//       setCategoryName("");
+//       setCategoryDescription("");
+//       setShowModal(false);
+
+//       fetchCategories(); // ✅ Refresh category list
+//     } catch (err) {
+//       console.error("Error creating category:", err);
+//     }
+//   };
+
+//   return (
+//     <div className="p-8">
+//       {/* Header */}
+//       <div className="flex justify-between items-center mb-10">
+//         <div>
+//           <h1 className="text-3xl font-bold text-pink-600">
+//             Category Management
+//           </h1>
+//           <p className="text-gray-600 mt-2 text-sm">
+//             Manage all categories easily.
+//           </p>
+//         </div>
+
+//         <button
+//           onClick={() => setShowModal(true)}
+//           className="bg-gradient-to-r from-pink-500 to-orange-400 text-white px-5 py-2 rounded-lg shadow"
+//         >
+//           + Add Category
+//         </button>
+//       </div>
+
+//       {/* Modal */}
+//       <AnimatePresence>
+//         {showModal && (
+//           <motion.div
+//             className="fixed inset-0 bg-black/50 flex justify-center items-center z-50"
+//             initial={{ opacity: 0 }}
+//             animate={{ opacity: 1 }}
+//             exit={{ opacity: 0 }}
+//             onClick={() => setShowModal(false)}
+//           >
+//             <motion.div
+//               className="bg-white p-8 rounded-2xl w-[90%] max-w-xl relative"
+//               initial={{ y: -50, opacity: 0 }}
+//               animate={{ y: 0, opacity: 1 }}
+//               exit={{ y: 50, opacity: 0 }}
+//               onClick={(e) => e.stopPropagation()}
+//             >
+//               {/* Close button */}
+//               <button
+//                 onClick={() => setShowModal(false)}
+//                 className="absolute top-4 right-4 text-gray-500"
+//               >
+//                 ✕
+//               </button>
+
+//               {/* Title */}
+//               <h3 className="text-2xl font-semibold text-pink-600 mb-6">
+//                 Add New Category
+//               </h3>
+
+//               {/* Form */}
+//               <form onSubmit={handleSubmit}>
+//                 <div className="mb-4">
+//                   <label className="block text-gray-700 font-medium mb-1">
+//                     Category Name
+//                   </label>
+//                   <input
+//                     type="text"
+//                     value={categoryName}
+//                     onChange={(e) => setCategoryName(e.target.value)}
+//                     placeholder="Enter category name"
+//                     className="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-pink-300"
+//                   />
+//                 </div>
+
+//                 <div className="mb-4">
+//                   <label className="block text-gray-700 font-medium mb-1">
+//                     Description
+//                   </label>
+//                   <textarea
+//                     value={categoryDescription}
+//                     onChange={(e) => setCategoryDescription(e.target.value)}
+//                     placeholder="Enter description"
+//                     className="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-pink-300 h-32"
+//                   ></textarea>
+//                 </div>
+
+//                 {/* Buttons */}
+//                 <div className="flex justify-end gap-3 mt-6">
+//                   <button
+//                     type="button"
+//                     onClick={() => setShowModal(false)}
+//                     className="px-4 py-2 border rounded-full text-gray-600"
+//                   >
+//                     Cancel
+//                   </button>
+//                   <button
+//                     type="submit"
+//                     className="px-6 py-2 bg-gradient-to-r from-pink-500 to-orange-400 text-white rounded-full"
+//                   >
+//                     Add Category
+//                   </button>
+//                 </div>
+//               </form>
+//             </motion.div>
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+
+//       {/* ✅ Category List */}
+//       {categories.length === 0 ? (
+//         <p className="text-gray-500 italic text-center">No categories created yet.</p>
+//       ) : (
+//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+//           {categories.map((cat) => (
+//             <motion.div
+//               key={cat.id}
+//               initial={{ opacity: 0, y: 20 }}
+//               animate={{ opacity: 1, y: 0 }}
+//               className="bg-white border border-pink-100 p-5 rounded-xl shadow hover:shadow-md"
+//             >
+//               <h3 className="text-lg font-bold text-pink-600">{cat.name}</h3>
+//               <p className="text-gray-700 text-sm mt-1">{cat.description}</p>
+//             </motion.div>
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }

@@ -6,7 +6,8 @@ const AdminLogin = lazy(() => import("/src/Pages/Auth_Pages/AdminLogin.jsx"));
 const EmployeeLogin = lazy(() => import("/src/Pages/Auth_Pages/EmployeeLogin.jsx"));
 const AdminDashboard = lazy(() => import("/src/Pages/Dashboard_Pages/AdminDasboardWrapper.jsx"));
 const ManagerDashboard = lazy(() => import("/src/Pages/Dashboard_Pages/ManagerDashboardWrapper.jsx"));
-const EmployeeDashboard = lazy(() => import("/src/Pages/Dashboard_Pages/UserDashboardWrapper.jsx"))
+const EmployeeDashboard = lazy(() => import("/src/Pages/Dashboard_Pages/UserDashboardWrapper.jsx"));
+const Manager_Profile = lazy(() => import("/src/Components/Manager_DashBoard_Components/Manager_Profile.jsx"));
 
 // ✅ Optional: simple loading fallback
 const LoadingScreen = () => (
@@ -88,7 +89,14 @@ function App() {
               </ProtectedRoute>
             }
           />
-
+  <Route
+            path="/manager_profile"
+            element={
+              <ProtectedRoute allowedRole="Manager">
+                <Manager_Profile />
+              </ProtectedRoute>
+            }
+          />
           {/* ✅ Employee Dashboard */}
           <Route
             path="/employee"
