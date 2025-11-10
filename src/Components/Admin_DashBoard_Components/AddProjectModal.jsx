@@ -591,255 +591,255 @@ export default function AddProjectModal({ onClose, onProjectCreated }) {
                 </motion.div>
               ) : (
 
-                <motion.div
-                  key="step2"
-                  initial={{ x: 40, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -40, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex flex-col"
-                >
-                  <h3 className="text-3xl font-bold text-purple-700 mb-8">Add Project</h3>
-
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* 🟣 LEFT COLUMN */}
-                    <div>
-                      {/* Project Manager */}
-                      <div className="mb-6">
-                        <label className="block text-gray-700 font-semibold mb-2">
-                          Project Manager
-                        </label>
-                        <select
-                          value={formData.manager}
-                          onChange={(e) => {
-                            setFormData({ ...formData, manager: parseInt(e.target.value) });
-                            setSelectedPhase("manager");
-                          }}
-                          className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-400 focus:outline-none"
-                        >
-                          <option value="">Select Project Manager</option>
-                          {USERS.map((user) => (
-                            <option key={user.id} value={user.id}>
-                              {user.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      {/* Phases */}
-                      <h4 className="text-gray-700 font-semibold mb-4">Phases</h4>
-
-                      <div className="space-y-3">
-                        {phases.map((phase) => (
-                          <button
-                            key={phase}
-                            onClick={() => setSelectedPhase(phase)}
-                            className={`w-full flex justify-between items-center px-4 py-3 border rounded-xl text-left transition-all duration-200 ${selectedPhase === phase
-                                ? "bg-purple-100 border-purple-400 shadow-sm"
-                                : "bg-white border-gray-200 hover:border-purple-300"
-                              }`}
-                          >
-                            <span className="text-gray-700 font-medium">
-                              {phase}
-                              {formData.teamLeaders[phase] && (
-                                <span className="text-sm text-gray-500 ml-1">
-                                  {" "}
-                                  -{" "}
-                                  {
-                                    USERS.find(
-                                      (u) => u.id === formData.teamLeaders[phase]
-                                    )?.name
-                                  }
-                                </span>
-                              )}
-                            </span>
-                            {selectedPhase === phase && (
-                              <span className="text-purple-500 font-bold text-lg">•</span>
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* 🟣 RIGHT COLUMN */}
-                    <div className="flex flex-col">
-                      <h4 className="text-gray-700 font-semibold mb-4">Teams</h4>
-
-                      <div className="border border-gray-200 rounded-xl p-4 bg-white h-[420px] overflow-y-auto shadow-inner">
-                        {!selectedPhase ? (
-                          <p className="text-gray-400 text-center mt-20">
-                            Select a Project Manager or a Phase to assign
-                          </p>
-                        ) : (
-                          <>
-                            {selectedPhase === "manager" ? (
-                              <div>
-                                <h5 className="text-gray-700 font-semibold mb-3 text-sm">
-                                  Assign Project Manager
-                                </h5>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                  {USERS.map((user) => {
-                                    const assigned = formData.manager === user.id;
-                                    return (
-                                      <button
-                                        key={user.id}
-                                        onClick={() =>
-                                          setFormData({ ...formData, manager: user.id })
-                                        }
-                                        className={`border rounded-lg px-4 py-3 text-left font-medium transition-all ${assigned
-                                            ? "bg-purple-600 text-white shadow-md"
-                                            : "bg-white hover:bg-purple-50 text-gray-700 border-gray-200"
-                                          }`}
-                                      >
-                                        {user.name}
-                                      </button>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            ) : (
-                              <div>
-                                <h5 className="text-gray-700 font-semibold mb-3 text-sm">
-                                  Assign Team Leader for:{" "}
-                                  <span className="text-purple-600">{selectedPhase}</span>
-                                </h5>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                  {USERS.map((user) => {
-                                    const assigned =
-                                      formData.teamLeaders[selectedPhase] === user.id;
-                                    return (
-                                      <button
-                                        key={user.id}
-                                        onClick={() =>
-                                          setFormData((prev) => ({
-                                            ...prev,
-                                            teamLeaders: {
-                                              ...prev.teamLeaders,
-                                              [selectedPhase]: user.id,
-                                            },
-                                          }))
-                                        }
-                                        className={`border rounded-lg px-4 py-3 text-left font-medium transition-all ${assigned
-                                            ? "bg-purple-600 text-white shadow-md"
-                                            : "bg-white hover:bg-purple-50 text-gray-700 border-gray-200"
-                                          }`}
-                                      >
-                                        {user.name}
-                                      </button>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-
-
-
                 // <motion.div
                 //   key="step2"
                 //   initial={{ x: 40, opacity: 0 }}
                 //   animate={{ x: 0, opacity: 1 }}
                 //   exit={{ x: -40, opacity: 0 }}
                 //   transition={{ duration: 0.3 }}
-                //   className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+                //   className="flex flex-col"
                 // >
-                //   {/* Left: Phases */}
-                //   <div>
-                //     <h3 className="text-xl font-bold text-gray-700 mb-4">
-                //       Project Phases ({formData.category})
-                //     </h3>
-                //     <div className="space-y-3">
-                //       {phases.length > 0 ? (
-                //         phases.map((phase, idx) => (
-                //           <div
-                //             key={idx}
-                //             className="p-3 rounded-xl border border-pink-100 bg-pink-50/70 font-medium"
-                //           >
-                //             {phase}
-                //             <div className="text-sm text-gray-500 mt-1">
-                //               Team Leader:{" "}
-                //               {formData.teamLeaders[phase]
-                //                 ? USERS.find(
-                //                     (u) => u.id === formData.teamLeaders[phase]
-                //                   )?.name
-                //                 : "Not Assigned"}
-                //             </div>
-                //           </div>
-                //         ))
-                //       ) : (
-                //         <p className="text-gray-500 italic">No category selected</p>
-                //       )}
-                //     </div>
-                //   </div>
+                //   <h3 className="text-3xl font-bold text-purple-700 mb-8">Add Project</h3>
 
-                //   {/* Right: Users */}
-                //   <div>
-                //     <h3 className="text-xl font-bold text-gray-700 mb-4">
-                //       Assign Team Leaders
-                //     </h3>
-
-                //     {/* Project Manager */}
-                //     <div className="mb-6">
-                //       <label className="block text-gray-700 font-semibold mb-2">
-                //         Project Manager
-                //       </label>
-                //       <select
-                //         value={formData.manager}
-                //         onChange={(e) =>
-                //           setFormData({ ...formData, manager: e.target.value })
-                //         }
-                //         className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400"
-                //         required
-                //       >
-                //         <option value="">Select Project Manager</option>
-                //         {USERS.map((user) => (
-                //           <option key={user.id} value={user.id}>
-                //             {user.name}
-                //           </option>
-                //         ))}
-                //       </select>
-                //     </div>
-
+                //   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                //     {/* 🟣 LEFT COLUMN */}
                 //     <div>
-                //       <label className="block text-gray-700 font-semibold mb-2">
-                //         Assign Team Leader per Phase
-                //       </label>
+                //       {/* Project Manager */}
+                //       <div className="mb-6">
+                //         <label className="block text-gray-700 font-semibold mb-2">
+                //           Project Manager
+                //         </label>
+                //         <select
+                //           value={formData.manager}
+                //           onChange={(e) => {
+                //             setFormData({ ...formData, manager: parseInt(e.target.value) });
+                //             setSelectedPhase("manager");
+                //           }}
+                //           className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-400 focus:outline-none"
+                //         >
+                //           <option value="">Select Project Manager</option>
+                //           {USERS.map((user) => (
+                //             <option key={user.id} value={user.id}>
+                //               {user.name}
+                //             </option>
+                //           ))}
+                //         </select>
+                //       </div>
 
-                //       {phases.map((phase, idx) => (
-                //         <div key={idx} className="mb-3">
-                //           <span className="text-sm font-medium text-gray-600">
-                //             {phase}:
-                //           </span>
-                //           <select
-                //             value={formData.teamLeaders[phase] || ""}
-                //             onChange={(e) =>
-                //               setFormData((prev) => ({
-                //                 ...prev,
-                //                 teamLeaders: {
-                //                   ...prev.teamLeaders,
-                //                   [phase]: parseInt(e.target.value),
-                //                 },
-                //               }))
-                //             }
-                //             className="ml-2 border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-pink-400"
+                //       {/* Phases */}
+                //       <h4 className="text-gray-700 font-semibold mb-4">Phases</h4>
+
+                //       <div className="space-y-3">
+                //         {phases.map((phase) => (
+                //           <button
+                //             key={phase}
+                //             // onClick={() => setSelectedPhase(phase)}
+                //             className={`w-full flex justify-between items-center px-4 py-3 border rounded-xl text-left transition-all duration-200 ${selectedPhase === phase
+                //                 ? "bg-purple-100 border-purple-400 shadow-sm"
+                //                 : "bg-white border-gray-200 hover:border-purple-300"
+                //               }`}
                 //           >
-                //             <option value="">Select</option>
-                //             {USERS.map((user) => (
-                //               <option key={user.id} value={user.id}>
-                //                 {user.name}
-                //               </option>
-                //             ))}
-                //           </select>
-                //         </div>
-                //       ))}
+                //             <span className="text-gray-700 font-medium">
+                //               {phase}
+                //               {formData.teamLeaders[phase] && (
+                //                 <span className="text-sm text-gray-500 ml-1">
+                //                   {" "}
+                //                   -{" "}
+                //                   {
+                //                     USERS.find(
+                //                       (u) => u.id === formData.teamLeaders[phase]
+                //                     )?.name
+                //                   }
+                //                 </span>
+                //               )}
+                //             </span>
+                //             {selectedPhase === phase && (
+                //               <span className="text-purple-500 font-bold text-lg">•</span>
+                //             )}
+                //           </button>
+                //         ))}
+                //       </div>
+                //     </div>
+
+                //     {/* 🟣 RIGHT COLUMN */}
+                //     <div className="flex flex-col">
+                //       <h4 className="text-gray-700 font-semibold mb-4">Teams</h4>
+
+                //       <div className="border border-gray-200 rounded-xl p-4 bg-white h-[420px] overflow-y-auto shadow-inner">
+                //         {!selectedPhase ? (
+                //           <p className="text-gray-400 text-center mt-20">
+                //             Select a Project Manager or a Phase to assign
+                //           </p>
+                //         ) : (
+                //           <>
+                //             {selectedPhase === "Manager" ? (
+                //               <div>
+                //                 <h5 className="text-gray-700 font-semibold mb-3 text-sm">
+                //                   Assign Project Manager
+                //                 </h5>
+                //                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                //                   {USERS.map((user) => {
+                //                     const assigned = formData.manager === user.id;
+                //                     return (
+                //                       <button
+                //                         key={user.id}
+                //                         onClick={() =>
+                //                           setFormData({ ...formData, manager: user.id })
+                //                         }
+                //                         className={`border rounded-lg px-4 py-3 text-left font-medium transition-all ${assigned
+                //                             ? "bg-purple-600 text-white shadow-md"
+                //                             : "bg-white hover:bg-purple-50 text-gray-700 border-gray-200"
+                //                           }`}
+                //                       >
+                //                         {user.name}
+                //                       </button>
+                //                     );
+                //                   })}
+                //                 </div>
+                //               </div>
+                //             ) : (
+                //               <div>
+                //                 <h5 className="text-gray-700 font-semibold mb-3 text-sm">
+                //                   Assign Team Leader for:{" "}
+                //                   <span className="text-purple-600">{selectedPhase}</span>
+                //                 </h5>
+                //                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                //                   {USERS.map((user) => {
+                //                     const assigned =
+                //                       formData.teamLeaders[selectedPhase] === user.id;
+                //                     return (
+                //                       <button
+                //                         key={user.id}
+                //                         onClick={() =>
+                //                           setFormData((prev) => ({
+                //                             ...prev,
+                //                             teamLeaders: {
+                //                               ...prev.teamLeaders,
+                //                               [selectedPhase]: user.id,
+                //                             },
+                //                           }))
+                //                         }
+                //                         className={`border rounded-lg px-4 py-3 text-left font-medium transition-all ${assigned
+                //                             ? "bg-purple-600 text-white shadow-md"
+                //                             : "bg-white hover:bg-purple-50 text-gray-700 border-gray-200"
+                //                           }`}
+                //                       >
+                //                         {user.name}
+                //                       </button>
+                //                     );
+                //                   })}
+                //                 </div>
+                //               </div>
+                //             )}
+                //           </>
+                //         )}
+                //       </div>
                 //     </div>
                 //   </div>
                 // </motion.div>
+
+
+
+                <motion.div
+                  key="step2"
+                  initial={{ x: 40, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -40, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+                >
+                  {/* Left: Phases */}
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-700 mb-4">
+                      Project Phases ({formData.category})
+                    </h3>
+                    <div className="space-y-3">
+                      {phases.length > 0 ? (
+                        phases.map((phase, idx) => (
+                          <div
+                            key={idx}
+                            className="p-3 rounded-xl border border-pink-100 bg-pink-50/70 font-medium"
+                          >
+                            {phase}
+                            <div className="text-sm text-gray-500 mt-1">
+                              Team Leader:{" "}
+                              {formData.teamLeaders[phase]
+                                ? USERS.find(
+                                    (u) => u.id === formData.teamLeaders[phase]
+                                  )?.name
+                                : "Not Assigned"}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-gray-500 italic">No category selected</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right: Users */}
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-700 mb-4">
+                      Assign Team Leaders
+                    </h3>
+
+                    {/* Project Manager */}
+                    <div className="mb-6">
+                      <label className="block text-gray-700 font-semibold mb-2">
+                        Project Manager
+                      </label>
+                      <select
+                        value={formData.manager}
+                        onChange={(e) =>
+                          setFormData({ ...formData, manager: e.target.value })
+                        }
+                        className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                        required
+                      >
+                        <option value="">Select Project Manager</option>
+                        {USERS.map((user) => (
+                          <option key={user.id} value={user.id}>
+                            {user.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 font-semibold mb-2">
+                        Assign Team Leader per Phase
+                      </label>
+
+                      {phases.map((phase, idx) => (
+                        <div key={idx} className="mb-3">
+                          <span className="text-sm font-medium text-gray-600">
+                            {phase}:
+                          </span>
+                          <select
+                            value={formData.teamLeaders[phase] || ""}
+                            onChange={(e) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                teamLeaders: {
+                                  ...prev.teamLeaders,
+                                  [phase]: parseInt(e.target.value),
+                                },
+                              }))
+                            }
+                            className="ml-2 border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-pink-400"
+                          >
+                            <option value="">Select</option>
+                            {USERS.map((user) => (
+                              <option key={user.id} value={user.id}>
+                                {user.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
               )}
             </AnimatePresence>
 
