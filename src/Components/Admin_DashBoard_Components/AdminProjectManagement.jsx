@@ -46,6 +46,7 @@ const ProjectForm = ({ onAddProjectClick }) => {
       setLoading(false);
     }
   };
+  
   const fetchTasks = () =>
     axios.get(`${BASE_API}/api/get_Task_details/`)
       .then((res) => setTasks(res.data || []));
