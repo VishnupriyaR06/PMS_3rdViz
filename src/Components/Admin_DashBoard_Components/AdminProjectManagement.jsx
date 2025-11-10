@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
 import AddPhaseModal from "/src/Components/Admin_DashBoard_Components/AddPhaseModal.jsx";
-import AddProjectModal from "/src/Components/Admin_DashBoard_Components/AddProjectModal.jsx"
 import ProjectDetails from "/src/Components/Admin_DashBoard_Components/AdminProjectsDetails.jsx"
 
 /* ------------------------- Project Card ------------------------- */
@@ -22,30 +21,15 @@ const ProjectCard = ({ project, onClick }) => (
 );
 
 /* ------------------------- Main ProjectForm ------------------------- */
-const ProjectForm = () => {
-  const [showForm, setShowForm] = useState(false);
-  const [selectedProject, setSelectedProject] = useState(null);
-  // const [teams, setTeams] = useState([]);
+const ProjectForm = ({ onAddProjectClick }) => {
   const [projects, setProjects] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [selectedProject, setSelectedProject] = useState(null);
   const [loading, setLoading] = useState(false);
   const [tasks, setTasks] = useState([]);
-  const [formData, setFormData] = useState({
-    project_name: "",
-    description: "",
-    // team: "",
-    members: [],
-    status: "",
-    start_date: "",
-    end_date: "",
-  });
- const [showPhaseModal, setShowPhaseModal] = useState(false);
 
   const BASE_API = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    // axios.get(`${BASE_API}/api/team_list/`).then((res) => setTeams(res.data || []));
-    axios.get(`${BASE_API}/api/user_list/`).then((res) => setUsers(res.data || []));
     fetchProjects();
     fetchTasks();
   }, []);
@@ -63,33 +47,8 @@ const ProjectForm = () => {
     }
   };
   const fetchTasks = () =>
-    axios.get(`${BASE_API}/api/get_Task_details/`).then((res) => setTasks(res.data || []));
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios
-      .post(`${BASE_API}/api/project_create/`, formData)
-      .then(() => {
-        alert("✅ Project created successfully!");
-        setShowForm(false);
-        setFormData({
-          project_name: "",
-          description: "",
-          // team: "",
-          members: [],
-          status: "",
-          start_date: "",
-          end_date: "",
-        });
-        fetchProjects();
-      })
-      .catch(() => alert("❌ Failed to submit project"));
-  };
-
-  const handleProjectCreated = () => {
-  setShowForm(false);      // Close AddProjectModal
-  setShowPhaseModal(true); // Open AddPhaseModal
-};
+    axios.get(`${BASE_API}/api/get_Task_details/`)
+      .then((res) => setTasks(res.data || []));
 
   const getTasksForProject = (name) =>
     tasks.filter(
@@ -111,7 +70,7 @@ const ProjectForm = () => {
         </div>
 
         <button
-          onClick={() => setShowForm(true)}
+          onClick={onAddProjectClick}
           className="bg-linear-to-r from-pink-500 to-orange-400 text-white px-4 py-2 rounded-lg shadow hover:opacity-90 transition"
         >
           + Add Project
@@ -119,7 +78,7 @@ const ProjectForm = () => {
       </div>
 
       {projects.length === 0 ? (
-        <p className="text-gray-500 italic">No projects created yet.</p>
+        <p className="text-gray-500 italic text-center">No projects created yet.</p>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((proj, i) => (
@@ -128,22 +87,12 @@ const ProjectForm = () => {
         </div>
       )}
 
-      {showForm && (
-       <AddProjectModal
-  onClose={() => setShowForm(false)}
-  onProjectCreated={handleProjectCreated}   // <-- important
-/>
-      )}
-
       {selectedProject && (
         <ProjectDetails
           project={selectedProject}
           onClose={() => setSelectedProject(null)}
           getTasksForProject={getTasksForProject}
         />)}
-     {showPhaseModal && (
-  <AddPhaseModal onClose={() => setShowPhaseModal(false)} />
-)}
     </div>
   );
 };
