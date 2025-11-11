@@ -42,7 +42,7 @@ const User = () => {
       {/* ✅ Navbar stays at top */}
       <Navbar
         title="User Panel"
-        sections={sections}
+        navItems={sections}
         activeSection={activeSection}
         setActiveSection={setActiveSection}
         gradient="from-pink-500 to-orange-400"

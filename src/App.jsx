@@ -1,21 +1,25 @@
 import React, { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import ProtectedRoute from "./Routes/ProtectedRoute.jsx";
 
 const AdminLogin = lazy(() => import("/src/Pages/Auth_Pages/AdminLogin.jsx"));
 const EmployeeLogin = lazy(() => import("/src/Pages/Auth_Pages/EmployeeLogin.jsx"));
 const AdminDashboard = lazy(() => import("/src/Pages/Dashboard_Pages/AdminDasboardWrapper.jsx"));
-const ManagerDashboard = lazy(() => import("/src/Pages/Dashboard_Pages/ManagerDashboardWrapper.jsx"));
-const EmployeeDashboard = lazy(() => import("/src/Pages/Dashboard_Pages/UserDashboardWrapper.jsx"))
+const ManagerDashboardWrapper = lazy(() =>
+  import("/src/Pages/Dashboard_Pages/ManagerDashboardWrapper.jsx")
+);
+const EmployeeDashboard = lazy(() =>
+  import("/src/Pages/Dashboard_Pages/UserDashboardWrapper.jsx")
+);
 
-// ✅ Optional: simple loading fallback
+// ✅ Loading fallback
 const LoadingScreen = () => (
   <div className="min-h-screen flex items-center justify-center bg-linear-to-tr from-pink-500 to-orange-400 text-white text-lg font-semibold">
     Loading...
   </div>
 );
 
-// ✅ Auto scroll to top on route change
+// ✅ Scroll to top
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   React.useEffect(() => {
@@ -24,7 +28,7 @@ const ScrollToTop = () => {
   return null;
 };
 
-// ✅ Optional 404 page
+// ✅ 404 Page
 const NotFound = () => (
   <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-tr from-pink-500 to-orange-400 text-white">
     <h1 className="text-5xl font-bold mb-2">404</h1>
@@ -38,18 +42,16 @@ const NotFound = () => (
   </div>
 );
 
-
 function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
-
-          {/* ✅ Default route → Employee Login */}
+          {/* Default route */}
           <Route path="/" element={<Navigate to="/employee-login" replace />} />
 
-          {/* ✅ Employee Login */}
+          {/* Employee Login */}
           <Route
             path="/employee-login"
             element={
@@ -59,7 +61,7 @@ function App() {
             }
           />
 
-          {/* ✅ Admin/Manager Login */}
+          {/* Admin Login */}
           <Route
             path="/admin-login"
             element={
@@ -69,7 +71,7 @@ function App() {
             }
           />
 
-          {/* ✅ Admin Dashboard */}
+          {/* Admin Dashboard */}
           <Route
             path="/admin"
             element={
@@ -79,17 +81,17 @@ function App() {
             }
           />
 
-          {/* ✅ Manager Dashboard */}
+          {/* Manager Dashboard */}
           <Route
             path="/manager"
             element={
               <ProtectedRoute allowedRole="Manager">
-                <ManagerDashboard />
+                <ManagerDashboardWrapper />
               </ProtectedRoute>
             }
           />
 
-          {/* ✅ Employee Dashboard */}
+          {/* Employee Dashboard */}
           <Route
             path="/employee"
             element={
@@ -99,7 +101,7 @@ function App() {
             }
           />
 
-          {/* 404 Fallback */}
+          {/* 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
