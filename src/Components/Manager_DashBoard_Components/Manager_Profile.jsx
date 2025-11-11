@@ -11,7 +11,7 @@ const ManagerProfile = () => {
 
   const BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
-  // ✅ Fetch Manager Details
+
   const fetchManagerDetails = async () => {
     const email = localStorage.getItem("userEmail")?.toLowerCase();
     if (!email) {
