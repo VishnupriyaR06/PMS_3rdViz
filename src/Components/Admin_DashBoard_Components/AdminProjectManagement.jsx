@@ -93,7 +93,6 @@ const ProjectForm = ({ onAddProjectClick }) => {
 
   useEffect(() => {
     fetchProjects();
-    fetchTasks();
   }, []);
 
   const fetchProjects = async () => {
@@ -109,14 +108,6 @@ const ProjectForm = ({ onAddProjectClick }) => {
     }
   };
 
-  const fetchTasks = () =>
-    axios.get(`${BASE_API}/api/get_Task_details/`)
-      .then((res) => setTasks(res.data || []));
-
-  const getTasksForProject = (name) =>
-    tasks.filter(
-      (t) => t.project?.trim().toLowerCase() === name.trim().toLowerCase()
-    );
 
   return (
     <div className="p-8">
