@@ -7,7 +7,6 @@ const EmployeeLogin = () => {
   const [form, setForm] = useState({
     email: "",
     password: "",
-    role_type: "",
   });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
@@ -28,9 +27,6 @@ const EmployeeLogin = () => {
       case "password":
         if (!value) return "Password is required.";
         if (value.length < 6) return "Password must be at least 6 characters.";
-        break;
-      case "role_type":
-        if (!value) return "Please select your role.";
         break;
       default:
         return "";
@@ -73,12 +69,14 @@ const EmployeeLogin = () => {
       const res = await axios.post(`${BASE_API}/api/single_login/`, form);
 
       if (res.status === 200) {
-        const { role_type, email } = res.data;
-        localStorage.setItem("role", role_type);
-        localStorage.setItem("userEmail", email);
+        const { email } = res.data;
 
-        if (role_type === "employee") navigate("/employee");
-        else if (role_type === "TeamLeader") navigate("/team-leader");
+        // ✅ Save login info for ProtectedRoute
+        localStorage.setItem("userEmail", email);
+        localStorage.setItem("role", "Employee"); // ✅ IMPORTANT: needed for ProtectedRoute
+
+        console.log("✅ Login successful, navigating to /employee");
+        navigate("/employee");
       }
     } catch (err) {
       const message =
@@ -93,9 +91,7 @@ const EmployeeLogin = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-pink-500 to-orange-400 p-4">
       <div className="bg-white/20 backdrop-blur-xl rounded-2xl shadow-xl w-full max-w-md p-8 border border-white/30 text-white">
-        <h1 className="text-4xl font-bold text-center mb-2">
-          Employee Login
-        </h1>
+        <h1 className="text-4xl font-bold text-center mb-2">Employee Login</h1>
         <p className="text-center text-white/80 mb-6 text-sm">
           Sign in to access your workspace
         </p>
@@ -125,7 +121,7 @@ const EmployeeLogin = () => {
             )}
           </div>
 
-          {/* Password (with visible toggle icon) */}
+          {/* Password */}
           <div className="mb-4">
             <label className="block mb-1 font-medium">Password</label>
             <div className="relative flex items-center">
@@ -151,31 +147,13 @@ const EmployeeLogin = () => {
             )}
           </div>
 
-          {/* Role Type */}
-          <div className="mb-4">
-            <label className="block mb-1 font-medium">Role Type</label>
-            <select
-              name="role_type"
-              value={form.role_type}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              className="w-full p-3 rounded-lg bg-white/90 text-gray-800 focus:ring-2 focus:ring-pink-500 outline-none"
-            >
-              <option value="">Select Role</option>
-              <option value="employee">Employee</option>
-              <option value="TeamLeader">Team Leader</option>
-            </select>
-            {errors.role_type && touched.role_type && (
-              <p className="mt-1 text-sm text-red-200">{errors.role_type}</p>
-            )}
-          </div>
-
           {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 bg-white text-pink-500 font-semibold rounded-lg hover:bg-pink-100 transition-all duration-300 ${loading ? "opacity-70 cursor-not-allowed" : ""
-              }`}
+            className={`w-full py-3 bg-white text-pink-500 font-semibold rounded-lg hover:bg-pink-100 transition-all duration-300 ${
+              loading ? "opacity-70 cursor-not-allowed" : ""
+            }`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>

@@ -1,43 +1,41 @@
-
-
 import { useState, useMemo } from "react";
 import {
   FaProjectDiagram,
   FaUsersCog,
-  FaTasks,
+  FaUser,
+  FaLayerGroup,
 } from "react-icons/fa";
 import Navbar from "/src/Components/Reusable_Components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 
-// import Project from "/src/Components/Admin_DashBoard_Components/AdminProjectManagement";
+import Project from "/src/Components/Admin_DashBoard_Components/AdminProjectManagement";
 import ManagerTeam from "/src/Components/Manager_DashBoard_Components/Manager_Team";
-import Task from "/src/Components/Admin_DashBoard_Components/Task";
 import ManagerProfile from "/src/Components/Manager_DashBoard_Components/Manager_Profile.jsx";
+import UserManagement from "../../Components/Manager_DashBoard_Components/Manager_user";
+import Category from "/src/Components/Admin_DashBoard_Components/AdminCategoryManagement";
+
+import AddProjectModal from "/src/Components/Admin_DashBoard_Components/AddProjectModal";
+
 
 const ManagerDashboardWrapper = () => {
-  const [activeSection, setActiveSection] = useState("ManagerTeam");
-
-  // const navItems = useMemo(
-  //   () => [
-  //     { name: "Project", icon: <FaProjectDiagram /> },
-  //     { name: "ManagerTeam", icon: <FaUsersCog /> },
-  //     { name: "Task", icon: <FaTasks /> },
-  //     // { name: "Profile", icon: <FaUserCircle /> },
-  //   ],
-  //   []
-  // );
-
-  console.log(FaProjectDiagram);
-  console.log(FaUsersCog);
-  console.log(FaTasks);
+  const [activeSection, setActiveSection] = useState("Project");
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
 
 
-  const navItems = [
-  // { name: "Project", icon: <FaProjectDiagram /> },
+    // ✅ Handlers to open modals (passed to Project)
+  const handleOpenProjectModal = () => setShowAddProjectModal(true);
+  const handleCloseProjectModal = () => setShowAddProjectModal(false);
+  const handleProjectCreated = () => {
+    setShowAddProjectModal(false);
+  };
+
+const navItems = [
+  { name: "Project", icon: <FaProjectDiagram /> },
   { name: "ManagerTeam", icon: <FaUsersCog /> },
-  { name: "Task", icon: <FaTasks /> },
+  { name: "Users", icon: <FaUser /> },
+  {name: "Category",icon:<FaLayerGroup />}
+  // { name: "Profile", icon: <FaUserCircle /> },
 ];
-
 
   // const renderContent = () => {
   //   switch (activeSection) {
@@ -54,16 +52,17 @@ const ManagerDashboardWrapper = () => {
   //   }
   // };
 
-    const sectionComponents = {
-      // Project: (
-      //   <Project onAddProjectClick={handleOpenProjectModal} />
-      // ),
-      ManagerTeam: <ManagerTeam />,
-      Task: <Task />,
-      Profile: <ManagerProfile />,
-    };
+   const sectionComponents = {
+  Project: <Project onAddProjectClick={handleOpenProjectModal} />,
+ManagerTeam: <ManagerTeam />,
+  Users: <UserManagement />,
+  Category:<Category/>
+  // Profile: <ManagerProfile />,
+};
 
-    console.log("Manager navItems (before render):", navItems);
+
+
+    // console.log("Manager navItems (before render):", navItems);
 
 
   return (
@@ -95,6 +94,15 @@ const ManagerDashboardWrapper = () => {
           {/* {renderContent()} */}
         </div>
       </main>
+
+     {/* ✅ Global Modals controlled from parent */}
+          {showAddProjectModal && (
+            <AddProjectModal
+              onClose={handleCloseProjectModal}
+              onProjectCreated={handleProjectCreated}
+            />
+          )}
+
     </div>
   );
 };
