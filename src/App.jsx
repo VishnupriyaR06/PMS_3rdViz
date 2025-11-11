@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import ProtectedRoute from "./Routes/ProtectedRoute.jsx";
 import ManagerDashboardWrapper from "./Pages/Dashboard_Pages/ManagerDashBoardWrapper.jsx";
