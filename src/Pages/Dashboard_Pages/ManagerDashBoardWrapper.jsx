@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import {
   FaProjectDiagram,
-  FaUsersCog,
   FaUser,
   FaLayerGroup,
 } from "react-icons/fa";
@@ -9,8 +8,6 @@ import Navbar from "/src/Components/Reusable_Components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 
 import Project from "/src/Components/Admin_DashBoard_Components/AdminProjectManagement";
-import ManagerTeam from "/src/Components/Manager_DashBoard_Components/Manager_Team";
-import ManagerProfile from "/src/Components/Manager_DashBoard_Components/Manager_Profile.jsx";
 import UserManagement from "../../Components/Manager_DashBoard_Components/Manager_user";
 import Category from "/src/Components/Admin_DashBoard_Components/AdminCategoryManagement";
 
@@ -31,38 +28,16 @@ const ManagerDashboardWrapper = () => {
 
 const navItems = [
   { name: "Project", icon: <FaProjectDiagram /> },
-  { name: "ManagerTeam", icon: <FaUsersCog /> },
   { name: "Users", icon: <FaUser /> },
   {name: "Category",icon:<FaLayerGroup />}
-  // { name: "Profile", icon: <FaUserCircle /> },
 ];
 
-  // const renderContent = () => {
-  //   switch (activeSection) {
-  //     case "Project":
-  //       return <Project />;
-  //     case "ManagerTeam":
-  //       return <ManagerTeam />;
-  //     case "Task":
-  //       return <Task />;
-  //     case "Profile":
-  //       return <ManagerProfile />;
-  //     default:
-  //       return <Project />;
-  //   }
-  // };
-
+  
    const sectionComponents = {
   Project: <Project onAddProjectClick={handleOpenProjectModal} />,
-ManagerTeam: <ManagerTeam />,
   Users: <UserManagement />,
   Category:<Category/>
-  // Profile: <ManagerProfile />,
 };
-
-
-
-    // console.log("Manager navItems (before render):", navItems);
 
 
   return (
