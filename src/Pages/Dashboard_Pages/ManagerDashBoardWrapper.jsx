@@ -8,7 +8,7 @@ import Navbar from "/src/Components/Reusable_Components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 
 import Project from "/src/Components/Admin_DashBoard_Components/AdminProjectManagement";
-import UserManagement from "../../Components/Manager_DashBoard_Components/Manager_user";
+import UserManagement from "/src/Components/Admin_DashBoard_Components/AdminUserManagement";
 import Category from "/src/Components/Admin_DashBoard_Components/AdminCategoryManagement";
 
 import AddProjectModal from "/src/Components/Admin_DashBoard_Components/AddProjectModal";
