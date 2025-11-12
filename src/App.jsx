@@ -1,22 +1,15 @@
 import React, { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import ProtectedRoute from "./Routes/ProtectedRoute.jsx";
+import ManagerDashboardWrapper from "./Pages/Dashboard_Pages/ManagerDashBoardWrapper.jsx";
 
-const AdminLogin = lazy(() => import("/src/Pages/Auth_Pages/AdminLogin.jsx"));
-const EmployeeLogin = lazy(() => import("/src/Pages/Auth_Pages/EmployeeLogin.jsx"));
-const AdminDashboard = lazy(() => import("/src/Pages/Dashboard_Pages/AdminDasboardWrapper.jsx"));
-const ManagerDashboard = lazy(() => import("/src/Pages/Dashboard_Pages/ManagerDashboardWrapper.jsx"));
-const EmployeeDashboard = lazy(() => import("/src/Pages/Dashboard_Pages/UserDashboardWrapper.jsx"));
-const Manager_Profile = lazy(() => import("/src/Components/Manager_DashBoard_Components/Manager_Profile.jsx"));
+// ✅ Direct imports (no lazy loading)
+import AdminLogin from "/src/Pages/Auth_Pages/AdminLogin.jsx";
+import EmployeeLogin from "/src/Pages/Auth_Pages/EmployeeLogin.jsx";
+import AdminDashboard from "/src/Pages/Dashboard_Pages/AdminDasboardWrapper.jsx";
+import EmployeeDashboard from "/src/Pages/Dashboard_Pages/UserDashboardWrapper.jsx";
 
-// ✅ Optional: simple loading fallback
-const LoadingScreen = () => (
-  <div className="min-h-screen flex items-center justify-center bg-linear-to-tr from-pink-500 to-orange-400 text-white text-lg font-semibold">
-    Loading...
-  </div>
-);
-
-// ✅ Auto scroll to top on route change
+// ✅ Scroll to top
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   React.useEffect(() => {
@@ -25,7 +18,7 @@ const ScrollToTop = () => {
   return null;
 };
 
-// ✅ Optional 404 page
+// ✅ 404 Page
 const NotFound = () => (
   <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-tr from-pink-500 to-orange-400 text-white">
     <h1 className="text-5xl font-bold mb-2">404</h1>
@@ -39,78 +32,67 @@ const NotFound = () => (
   </div>
 );
 
-
 function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Suspense fallback={<LoadingScreen />}>
-        <Routes>
+      <Routes>
+        {/* Default route */}
+        <Route path="/" element={<Navigate to="/employee-login" replace />} />
 
-          {/* ✅ Default route → Employee Login */}
-          <Route path="/" element={<Navigate to="/employee-login" replace />} />
+        {/* Employee Login */}
+        <Route
+          path="/employee-login"
+          element={
+            <ProtectedRoute isLoginPage>
+              <EmployeeLogin />
+            </ProtectedRoute>
+          }
+        />
 
-          {/* ✅ Employee Login */}
-          <Route
-            path="/employee-login"
-            element={
-              <ProtectedRoute isLoginPage>
-                <EmployeeLogin />
-              </ProtectedRoute>
-            }
-          />
+        {/* Admin Login */}
+        <Route
+          path="/admin-login"
+          element={
+            <ProtectedRoute isLoginPage>
+              <AdminLogin />
+            </ProtectedRoute>
+          }
+        />
 
-          {/* ✅ Admin/Manager Login */}
-          <Route
-            path="/admin-login"
-            element={
-              <ProtectedRoute isLoginPage>
-                <AdminLogin />
-              </ProtectedRoute>
-            }
-          />
+        {/* Admin Dashboard */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRole="Admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-          {/* ✅ Admin Dashboard */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute allowedRole="Admin">
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
+        {/* Manager Dashboard */}
+        <Route
+          path="/manager"
+          element={
+            <ProtectedRoute allowedRole="Manager">
+              <ManagerDashboardWrapper />
+            </ProtectedRoute>
+          }
+        />
 
-          {/* ✅ Manager Dashboard */}
-          <Route
-            path="/manager"
-            element={
-              <ProtectedRoute allowedRole="Manager">
-                <ManagerDashboard />
-              </ProtectedRoute>
-            }
-          />
-  <Route
-            path="/manager_profile"
-            element={
-              <ProtectedRoute allowedRole="Manager">
-                <Manager_Profile />
-              </ProtectedRoute>
-            }
-          />
-          {/* ✅ Employee Dashboard */}
-          <Route
-            path="/employee"
-            element={
-              <ProtectedRoute allowedRole="Employee">
-                <EmployeeDashboard />
-              </ProtectedRoute>
-            }
-          />
+        {/* Employee Dashboard */}
+        <Route
+          path="/employee"
+          element={
+            <ProtectedRoute allowedRole="Employee">
+              <EmployeeDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-          {/* 404 Fallback */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
+        {/* 404 */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </BrowserRouter>
   );
 }
