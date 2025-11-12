@@ -4,7 +4,12 @@ import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
 
 const AdminLogin = () => {
-  const [form, setForm] = useState({ email: "", password: "", role_type: "" });
+const [form, setForm] = useState({
+  email: "",
+  password: "",
+  role_type: ""
+});
+
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
@@ -66,7 +71,6 @@ const AdminLogin = () => {
     try {
       const res = await axios.post(`${BASE_API}/api/am_login/`, form);
       const { role_type, email } = res.data;
-
       localStorage.setItem("role", role_type);
       localStorage.setItem("userEmail", email);
 
