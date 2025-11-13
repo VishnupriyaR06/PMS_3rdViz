@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
-import AddPhaseModal from "/src/Components/Admin_DashBoard_Components/AddPhaseModal.jsx";
-import ProjectDetails from "/src/Components/Admin_DashBoard_Components/AdminProjectsDetails.jsx";
+import AddPhaseModal from "/src/Components/Admin_DashBoard_Components/AdminCategory/AddPhaseModal.jsx";
+import ProjectDetails from "/src/Components/Admin_DashBoard_Components/AdminProjects/AdminProjectsDetails.jsx";
 
 /* ------------------------- Project Card ------------------------- */
 const ProjectCard = ({ project, onClick }) => {
@@ -158,7 +158,10 @@ const ProjectForm = ({ onAddProjectClick }) => {
           onClose={() => setSelectedProject(null)}
           getTasksForProject={getTasksForProject} // ✅ fixed reference
         />
+       
       )}
+
+     
     </div>
   );
 };

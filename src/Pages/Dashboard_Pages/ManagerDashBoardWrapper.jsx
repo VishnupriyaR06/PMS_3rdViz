@@ -7,11 +7,11 @@ import {
 import Navbar from "/src/Components/Reusable_Components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 
-import Project from "/src/Components/Admin_DashBoard_Components/AdminProjectManagement";
+import Project from "/src/Components/Admin_DashBoard_Components/AdminProjects/AdminProjectManagement.jsx";
 import UserManagement from "/src/Components/Admin_DashBoard_Components/AdminUserManagement";
-import Category from "/src/Components/Admin_DashBoard_Components/AdminCategoryManagement";
+import Category from "/src/Components/Admin_DashBoard_Components/AdminCategory/AdminCategoryManagement.jsx";
 
-import AddProjectModal from "/src/Components/Admin_DashBoard_Components/AddProjectModal";
+import AddProjectModal from "/src/Components/Admin_DashBoard_Components/AdminProjects/AddProjectModal.jsx";
 
 
 const ManagerDashboardWrapper = () => {
