@@ -3,10 +3,12 @@ import { useState, useRef, useEffect } from "react";
 import { FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";   // ✅ Added
+// import EmployeeProfile from "../../Components/User_Dashboard_Components/EmployeeProfile";
 
 const Navbar = ({
-  title = "Dashboard",
+  title = "User Panel",
   navItems = [],
+  role,
   activeSection,
   setActiveSection,
   gradient = "from-pink-500 to-orange-400",
@@ -44,24 +46,25 @@ const Navbar = ({
     }
   };
 
-  // ✅ Handle Profile Click using component routes (navigate)
   const handleProfile = () => {
     setIsDropdownOpen(false);
 
-    const role = localStorage.getItem("role");
+    if (role === "Employee" && setActiveSection) {
+      setActiveSection("Profile");
+      return;
+    }
 
-    if (role === "Admin") {
-      navigate("/admin_profile");
-    } else if (role === "Manager") {
-      navigate("/manager_profile");
-    } else if (role === "TeamLeader") {
-      navigate("/teamlead_profile");
-    } else if (role === "employee") {
-      navigate("/employee_profile");
-    } else {
-      navigate("/");
+    if (role === "Admin" && setActiveSection) {
+      setActiveSection("Profile");
+      return;
+    }
+
+    if (role === "Manager" && setActiveSection) {
+      setActiveSection("Profile");
+      return;
     }
   };
+
 
   return (
     <>
@@ -79,11 +82,10 @@ const Navbar = ({
             <button
               key={i}
               onClick={() => setActiveSection(navItem.name)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-base font-semibold transition-all duration-200 ${
-                activeSection === navItem.name
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-base font-semibold transition-all duration-200 ${activeSection === navItem.name
                   ? "text-pink-600 border-b-2 border-pink-600"
                   : "text-gray-700 hover:text-pink-600"
-              }`}
+                }`}
             >
               <span className="text-lg">{navItem.icon}</span>
               {navItem.name}

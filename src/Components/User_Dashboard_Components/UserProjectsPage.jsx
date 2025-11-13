@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaUsers, FaChartLine, FaArrowLeft, FaCalendar, FaFlag, FaTag } from "react-icons/fa";
+import ProjectDetails from "./UserProjectDetails.jsx";
 
 const UserProjectsPage = () => {
   const [projects, setProjects] = useState([]);

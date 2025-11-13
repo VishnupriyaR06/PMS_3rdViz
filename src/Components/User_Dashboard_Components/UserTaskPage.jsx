@@ -1,108 +1,3 @@
-// import { useEffect, useState } from "react";
-// import axios from "axios";
-
-// const UserTaskDashboard = () => {
-//   const [tasks, setTasks] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [username, setUsername] = useState("");
-
-//   useEffect(() => {
-//     // ✅ Get stored username (from login)
-//     const storedUsername = localStorage.getItem("username");
-
-//     if (!storedUsername) {
-//       console.warn("⚠️ Username not found in localStorage");
-//       setLoading(false);
-//       return;
-//     }
-
-//     setUsername(storedUsername);
-//     fetchUserTasks(storedUsername);
-//   }, []);
-
-//   // ✅ Fetch and filter tasks from the API
-//   const fetchUserTasks = (username) => {
-//     axios
-//       .get("http://127.0.0.1:8000/api/get_Task_details/")
-//       .then((res) => {
-//         const allTasks = res.data;
-
-//         // ✅ Filter tasks where username exists in Task_member array
-//         const userTasks = allTasks.filter((task) =>
-//           Array.isArray(task.Task_member)
-//             ? task.Task_member.some(
-//               (member) =>
-//                 member?.toLowerCase().trim() === username?.toLowerCase().trim()
-//             )
-//             : false
-//         );
-
-//         setTasks(userTasks);
-//         setLoading(false);
-//       })
-//       .catch((err) => {
-//         console.error("Error fetching tasks:", err);
-//         setLoading(false);
-//       });
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-gray-50 p-6">
-//       {loading ? (
-//         <p className="text-gray-500 italic text-center">Loading your tasks...</p>
-//       ) : (
-//         <>
-//           {/* Header */}
-//           <div className="bg-white shadow-md rounded-xl p-6 mb-8 text-center">
-//             <h1 className="text-3xl font-bold text-gray-800">
-//               🧑‍💻 Tasks Assigned to{" "}
-//               <span className="text-blue-600">{username}</span>
-//             </h1>
-//           </div>
-
-//           {/* Task List */}
-//           {tasks.length === 0 ? (
-//             <p className="text-gray-500 italic text-center">
-//               No tasks assigned to you yet.
-//             </p>
-//           ) : (
-//             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-//               {tasks.map((task, index) => (
-//                 <div
-//                   key={index}
-//                   className="bg-white p-5 shadow-md rounded-lg border border-gray-200 hover:shadow-lg transition"
-//                 >
-//                   <h3 className="text-lg font-semibold text-gray-800">
-//                     {task.task_name}
-//                   </h3>
-//                   <p className="text-gray-700 text-sm mt-2">
-//                     <strong>Project:</strong> {task.project}
-//                   </p>
-//                   <p className="text-gray-700 text-sm mt-1">
-//                     <strong>Description:</strong> {task.Task_inform}
-//                   </p>
-//                   <p className="text-gray-700 text-sm mt-1">
-//                     <strong>Priority:</strong> {task.priority}
-//                   </p>
-//                   <p className="text-gray-700 text-sm mt-1">
-//                     <strong>Status:</strong> {task.status}
-//                   </p>
-//                   <p className="text-gray-600 text-xs mt-2">
-//                     <strong>Duration:</strong> {task.start_date} → {task.deadline}
-//                   </p>
-//                 </div>
-//               ))}
-//             </div>
-//           )}
-//         </>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default UserTaskDashboard;
-
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -112,7 +7,8 @@ const UserTaskPage = () => {
   const [username, setUsername] = useState("");
 
   const BASE_API = import.meta.env.VITE_API_URL;
-
+ 
+  
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
     if (!storedUsername) {
@@ -127,9 +23,8 @@ const UserTaskPage = () => {
 
   const fetchUserTasks = async (username) => {
     try {
-      const res = await axios.get(`${BASE_API}/api/get_Task_details/`);
+      const res = await axios.get(`${BASE_API}/api/Task_details/`);
       const allTasks = res.data;
-
       const userTasks = allTasks.filter((task) =>
         Array.isArray(task.Task_member)
           ? task.Task_member.some(

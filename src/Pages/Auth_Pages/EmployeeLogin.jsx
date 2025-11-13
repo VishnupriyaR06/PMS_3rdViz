@@ -67,17 +67,17 @@ const EmployeeLogin = () => {
     setLoading(true);
     try {
       const res = await axios.post(`${BASE_API}/api/single_login/`, form);
-
       if (res.status === 200) {
-        const { email } = res.data;
+        const { email, name } = res.data;
 
-        // ✅ Save login info for ProtectedRoute
-        localStorage.setItem("userEmail", email);
-        localStorage.setItem("role", "Employee"); // ✅ IMPORTANT: needed for ProtectedRoute
+        localStorage.setItem("userEmail", email)
+        localStorage.setItem("role", "Employee")
+        localStorage.setItem("username", name)
 
-        console.log("✅ Login successful, navigating to /employee");
+        console.log("Login successful");
         navigate("/employee");
       }
+
     } catch (err) {
       const message =
         err?.response?.data?.msg ||
@@ -151,9 +151,8 @@ const EmployeeLogin = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 bg-white text-pink-500 font-semibold rounded-lg hover:bg-pink-100 transition-all duration-300 ${
-              loading ? "opacity-70 cursor-not-allowed" : ""
-            }`}
+            className={`w-full py-3 bg-white text-pink-500 font-semibold rounded-lg hover:bg-pink-100 transition-all duration-300 ${loading ? "opacity-70 cursor-not-allowed" : ""
+              }`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>

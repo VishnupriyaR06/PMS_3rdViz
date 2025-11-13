@@ -11,11 +11,16 @@ import Users from "/src/Components/Admin_DashBoard_Components/AdminUserManagemen
 import Category from "/src/Components/Admin_DashBoard_Components/AdminCategoryManagement";
 import Navbar from "/src/Components/Reusable_Components/Navbar";
 
+import Profile from "/src/Components/Manager_DashBoard_Components/Manager_Profile.jsx"
+
 import AddProjectModal from "/src/Components/Admin_DashBoard_Components/AddProjectModal";
 
 const AdminDashboardWrapper = () => {
   const [activeSection, setActiveSection] = useState("Project");
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+
+  const admin_role = localStorage.getItem("role")
+  console.log("admin_role", admin_role)
 
   // ✅ Navigation items configuration
   const navItems = useMemo(
@@ -41,6 +46,7 @@ const AdminDashboardWrapper = () => {
     ),
     Users: <Users />,
     Category: <Category />,
+    Profile: <Profile />,
   };
 
   return (
@@ -49,6 +55,7 @@ const AdminDashboardWrapper = () => {
       <Navbar
         title="Admin Panel"
         navItems={navItems}
+        role={admin_role}
         activeSection={activeSection}
         setActiveSection={setActiveSection}
       />
@@ -71,7 +78,7 @@ const AdminDashboardWrapper = () => {
         </div>
       </main>
 
-       {/* ✅ Global Modals controlled from parent */}
+      {/* ✅ Global Modals controlled from parent */}
       {showAddProjectModal && (
         <AddProjectModal
           onClose={handleCloseProjectModal}

@@ -1,3 +1,4 @@
+// import ProjectDetails from "./ProjectDetails";
 const UserProjectDetail = ({ project }) => {
   return (
     <div className="p-6 ">
@@ -6,6 +7,14 @@ const UserProjectDetail = ({ project }) => {
         <h1 className="text-4xl font-semibold bg-linear-to-r from-pink-500 via-orange-400 to-yellow-400 bg-clip-text text-transparent mb-6">
           {project.project_name || "Untitled Project"}
         </h1>
+        
+ {/* Name Card */}
+          <div className="bg-gray-50 p-5 rounded-xl shadow-md border border-gray-200">
+            <p className="text-lg text-gray-800 font-medium">Name</p>
+            <p className="text-gray-600 text-sm mt-2">
+              {project.name || "Not assigned"}
+            </p>
+          </div>
 
         {/* Description Card */}
         <div className=" p-5 rounded-xl shadow-md border border-gray-200 mb-5">

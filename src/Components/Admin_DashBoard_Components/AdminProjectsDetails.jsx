@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 /* ------------------------- Task Card ------------------------- */
@@ -8,12 +8,18 @@ const ProjectTaskCard = ({ task }) => (
     <p className="text-sm text-gray-700 mt-1">{task.Task_inform}</p>
     <p className="text-sm mt-2"><strong>Priority:</strong> {task.priority}</p>
     <p className="text-sm"><strong>Status:</strong> {task.status}</p>
-    <p className="text-xs text-gray-500 mt-1">{task.start_date} → {task.deadline}</p>
+    <p className="text-xs text-gray-500 mt-1">
+      {task.start_date} → {task.deadline}
+    </p>
 
     <p className="text-sm mt-2">
       <strong>Members:</strong>{" "}
       {Array.isArray(task.Task_member)
-        ? task.Task_member.map((m) => (typeof m === "object" ? m.username || m.email : m)).join(", ")
+        ? task.Task_member
+            .map((m) =>
+              typeof m === "object" ? m.username || m.email : m
+            )
+            .join(", ")
         : ""}
     </p>
   </div>
@@ -31,9 +37,14 @@ const AlertModal = ({ show, type, message, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black/40 backdrop-blur-sm z-[100]">
-      <div className={`p-6 rounded-xl shadow-lg border ${colors} w-[90%] max-w-sm text-center`}>
+      <div
+        className={`p-6 rounded-xl shadow-lg border ${colors} w-[90%] max-w-sm text-center`}
+      >
         <p className="text-lg font-semibold mb-4">{message}</p>
-        <button onClick={onClose} className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900">
+        <button
+          onClick={onClose}
+          className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900"
+        >
           OK
         </button>
       </div>
@@ -42,9 +53,21 @@ const AlertModal = ({ show, type, message, onClose }) => {
 };
 
 /* ------------------------- Project Modal ------------------------- */
-const ProjectDetails = ({ project, onClose, getTasksForProject, onProjectUpdated }) => {
+const ProjectDetails = ({
+  project,
+  onClose,
+  // getTasksForProject,
+  onProjectUpdated,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [alert, setAlert] = useState({ show: false, type: "", message: "", confirmDelete: false });
+  const [alert, setAlert] = useState({
+    show: false,
+    type: "",
+    message: "",
+    confirmDelete: false,
+  });
+  const [tasks, setTasks] = useState([]); // ✅ store tasks here
+  const [loadingTasks, setLoadingTasks] = useState(true); // ✅ loader for tasks
 
   const [form, setForm] = useState({
     name: project.name,
@@ -55,12 +78,31 @@ const ProjectDetails = ({ project, onClose, getTasksForProject, onProjectUpdated
     priority: project.priority || "",
   });
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const showAlert = (type, message) =>
     setAlert({ show: true, type, message });
 
-  /* ✅ UPDATE PROJECT (Fixed URL + Encoded Name) */
+  /* ✅ Fetch tasks when project changes */
+  useEffect(() => {
+    const fetchTasks = async () => {
+      setLoadingTasks(true);
+      try {
+        const data = await (project.name); // ✅ await async call
+        setTasks(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Error fetching tasks:", err);
+        setTasks([]);
+      } finally {
+        setLoadingTasks(false);
+      }
+    };
+
+    fetchTasks();
+  }, [project]);
+
+  /* ✅ UPDATE PROJECT */
   const handleUpdate = async () => {
     try {
       const encodedName = encodeURIComponent(project.name);
@@ -73,14 +115,13 @@ const ProjectDetails = ({ project, onClose, getTasksForProject, onProjectUpdated
       showAlert("success", "✅ Project updated successfully!");
       setIsEditing(false);
       if (onProjectUpdated) onProjectUpdated(res.data);
-
     } catch (err) {
       console.error("Update Error:", err.response?.data || err);
       showAlert("error", "❌ Failed to update project.");
     }
   };
 
-  /* ✅ DELETE PROJECT (Fixed URL + Encoded Name) */
+  /* ✅ DELETE PROJECT */
   const handleDelete = () => {
     setAlert({
       show: true,
@@ -90,20 +131,23 @@ const ProjectDetails = ({ project, onClose, getTasksForProject, onProjectUpdated
     });
   };
 
-  const confirmDelete = async () => {
-    try {
-      const encodedName = encodeURIComponent(project.name);
+ const confirmDelete = async () => {
+  try {
+    const projectName = project.name || project.project_name;  // ✅ support both
+    const encodedName = encodeURIComponent(projectName);
 
-      await axios.delete(`http://127.0.0.1:8000/api/project_delete/${encodedName}/`);
+    await axios.delete(
+      `http://127.0.0.1:8000/api/project_delete/${encodedName}/`
+    );
 
-      showAlert("success", "🗑️ Project deleted successfully!");
-      setTimeout(() => onClose(), 1000);
+    showAlert("success", "🗑️ Project deleted successfully!");
+    setTimeout(() => onClose(), 1000);
+  } catch (err) {
+    console.error("Delete Error:", err.response?.data || err);
+    showAlert("error", "❌ Failed to delete project.");
+  }
+};
 
-    } catch (err) {
-      console.error("Delete Error:", err.response?.data || err);
-      showAlert("error", "❌ Failed to delete project.");
-    }
-  };
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
@@ -116,7 +160,6 @@ const ProjectDetails = ({ project, onClose, getTasksForProject, onProjectUpdated
         </button>
 
         <div className="max-w-3xl mx-auto mt-10">
-
           {/* Header */}
           <div className="flex justify-between items-center border-b pb-4 mb-6">
             <h3 className="text-4xl font-bold text-pink-600">{form.name}</h3>
@@ -138,36 +181,70 @@ const ProjectDetails = ({ project, onClose, getTasksForProject, onProjectUpdated
             </div>
           </div>
 
-          {/* Edit Section */}
+          {/* Edit or View Section */}
           {isEditing ? (
             <div className="space-y-4 text-gray-800 text-lg leading-relaxed">
-              <input name="name" value={form.name} onChange={handleChange} className="w-full border rounded-lg p-2" />
-              <textarea name="description" value={form.description} onChange={handleChange} className="w-full border rounded-lg p-2" />
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                className="w-full border rounded-lg p-2"
+              />
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                className="w-full border rounded-lg p-2"
+              />
 
-              <select name="status" value={form.status} onChange={handleChange} className="w-full border rounded-lg p-2">
+              <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+                className="w-full border rounded-lg p-2"
+              >
                 <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Completed">Completed</option>
               </select>
 
               <div className="grid grid-cols-2 gap-4">
-                <input type="date" name="start_date" value={form.start_date} onChange={handleChange} className="border rounded-lg p-2" />
-                <input type="date" name="End_date" value={form.End_date} onChange={handleChange} className="border rounded-lg p-2" />
+                <input
+                  type="date"
+                  name="start_date"
+                  value={form.start_date}
+                  onChange={handleChange}
+                  className="border rounded-lg p-2"
+                />
+                <input
+                  type="date"
+                  name="End_date"
+                  value={form.End_date}
+                  onChange={handleChange}
+                  className="border rounded-lg p-2"
+                />
               </div>
 
-              <select name="priority" value={form.priority} onChange={handleChange} className="w-full border rounded-lg p-2">
+              <select
+                name="priority"
+                value={form.priority}
+                onChange={handleChange}
+                className="w-full border rounded-lg p-2"
+              >
                 <option value="">Project Priority</option>
                 <option value="High">High</option>
                 <option value="Medium">Medium</option>
                 <option value="Low">Low</option>
               </select>
 
-              <button onClick={handleUpdate} className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
+              <button
+                onClick={handleUpdate}
+                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
+              >
                 Save Changes
               </button>
             </div>
           ) : (
-            /* View Section */
             <div className="space-y-4 text-gray-800 text-lg">
               <p><strong>Name:</strong> {project.name}</p>
               <p><strong>Status:</strong> {project.status}</p>
@@ -178,14 +255,17 @@ const ProjectDetails = ({ project, onClose, getTasksForProject, onProjectUpdated
             </div>
           )}
 
-          {/* Task List */}
+          {/* ✅ Tasks List Section */}
           <div className="mt-10 border-t pt-6">
             <h4 className="text-2xl font-semibold mb-4">📋 Tasks for this Project</h4>
-            {getTasksForProject(project.name).length === 0 ? (
+
+            {loadingTasks ? (
+              <p className="text-gray-500 italic">Loading tasks...</p>
+            ) : tasks.length === 0 ? (
               <p className="text-gray-500 italic">No tasks available.</p>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2">
-                {getTasksForProject(project.name).map((task, i) => (
+                {tasks.map((task, i) => (
                   <ProjectTaskCard key={i} task={task} />
                 ))}
               </div>

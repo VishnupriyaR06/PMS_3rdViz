@@ -91,6 +91,17 @@ const ProjectForm = ({ onAddProjectClick }) => {
 
   const BASE_API = import.meta.env.VITE_API_URL;
 
+
+//   const getTasksForProject = async (projectId) => {
+//   try {
+//     const res = await axios.get(`${BASE_API}/api/project_details/`);
+//     return res.data;
+//   } catch (err) {
+//     console.error("Failed to fetch tasks:", err);
+//     return [];
+//   }
+// };
+
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -143,7 +154,7 @@ const ProjectForm = ({ onAddProjectClick }) => {
         <ProjectDetails
           project={selectedProject}
           onClose={() => setSelectedProject(null)}
-          getTasksForProject={getTasksForProject}
+          // getTasksForProject={getTasksForProject}
         />
       )}
     </div>

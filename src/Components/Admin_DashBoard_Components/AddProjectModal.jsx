@@ -12,7 +12,7 @@ export default function AddProjectModal({ onClose, onProjectCreated }) {
     category: "",
     start_date: "",
     End_date: "",
-    manager: "",
+    project_manager: "",
     status: "Pending",
   });
 
@@ -45,7 +45,10 @@ export default function AddProjectModal({ onClose, onProjectCreated }) {
 
     axios
       .get("http://127.0.0.1:8000/api/user_list/")
-      .then((res) => setUsers(res.data))
+      .then((res) => {
+        console.log("rESPONSE :", res.data[0]?.username),
+          setUsers(res.data)
+      })
       .catch((err) => console.error("User fetch error:", err));
   }, []);
 
@@ -56,7 +59,7 @@ export default function AddProjectModal({ onClose, onProjectCreated }) {
       setError("Please select Start & End dates");
       return;
     }
-    if (!formData.manager) {
+    if (!formData.project_manager) {
       setError("Please select a project manager");
       return;
     }
@@ -66,7 +69,7 @@ export default function AddProjectModal({ onClose, onProjectCreated }) {
 
     try {
       await axios.post("http://127.0.0.1:8000/api/project_create/", formData);
-      alert("✅ Project Created Successfully!");
+      // alert("✅ Project Created Successfully!");
       onProjectCreated();
       onClose();
     } catch (err) {
@@ -76,6 +79,7 @@ export default function AddProjectModal({ onClose, onProjectCreated }) {
       setLoading(false);
     }
   };
+
 
   return (
     <AnimatePresence>
@@ -169,16 +173,16 @@ export default function AddProjectModal({ onClose, onProjectCreated }) {
             <div>
               <label className="font-medium">Add Project Manager</label>
               <select
-                value={formData.manager}
+                value={formData.project_manager}
                 onChange={(e) =>
-                  setFormData({ ...formData, manager: e.target.value })
+                  setFormData({ ...formData, project_manager: e.target.value })
                 }
                 className="w-full border rounded-xl px-4 py-3"
               >
                 <option value="">Select Manager</option>
 
                 {users.map((user) => (
-                  <option key={user.id} value={user.id}>
+                  <option key={user.id} value={user.username}>
                     {user.username || user.name || user.email}
                   </option>
                 ))}

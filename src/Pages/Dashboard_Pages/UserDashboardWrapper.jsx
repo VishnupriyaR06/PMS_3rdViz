@@ -14,12 +14,12 @@ import EmployeeProfile from "../../Components/User_Dashboard_Components/Employee
 const User = () => {
   const [activeSection, setActiveSection] = useState("Dashboard");
 
+  const emp_role= localStorage.getItem("emp_role")
+
   const sections = [
     { name: "Dashboard", icon: <FaTachometerAlt /> },
     { name: "Projects", icon: <FaProjectDiagram /> },
     { name: "Task", icon: <FaFileAlt /> },
-     { name: "Profile", icon: <FaUserCircle /> },
-
   ];
 
   const renderContent = () => {
@@ -44,6 +44,7 @@ const User = () => {
         title="User Panel"
         navItems={sections}
         activeSection={activeSection}
+        role={emp_role}
         setActiveSection={setActiveSection}
         gradient="from-pink-500 to-orange-400"
       />

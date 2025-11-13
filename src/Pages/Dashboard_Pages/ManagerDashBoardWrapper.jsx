@@ -6,7 +6,7 @@ import {
 } from "react-icons/fa";
 import Navbar from "/src/Components/Reusable_Components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
-
+import Profile from "/src/Components/Manager_DashBoard_Components/Manager_Profile.jsx";
 import Project from "/src/Components/Admin_DashBoard_Components/AdminProjectManagement";
 import UserManagement from "/src/Components/Admin_DashBoard_Components/AdminUserManagement";
 import Category from "/src/Components/Admin_DashBoard_Components/AdminCategoryManagement";
@@ -18,6 +18,7 @@ const ManagerDashboardWrapper = () => {
   const [activeSection, setActiveSection] = useState("Project");
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
 
+  const manager_role = localStorage.getItem("role")
 
     // ✅ Handlers to open modals (passed to Project)
   const handleOpenProjectModal = () => setShowAddProjectModal(true);
@@ -36,7 +37,8 @@ const navItems = [
    const sectionComponents = {
   Project: <Project onAddProjectClick={handleOpenProjectModal} />,
   Users: <UserManagement />,
-  Category:<Category/>
+  Category:<Category/>,
+  Profile: <Profile/>,
 };
 
 
@@ -46,6 +48,7 @@ const navItems = [
       <Navbar
         title="Manager Panel"
         navItems={navItems}
+        role={manager_role}
         activeSection={activeSection}
         setActiveSection={setActiveSection}
         gradient="from-pink-500 to-orange-400"

@@ -78,7 +78,7 @@ const ManagerProfile = () => {
     try {
       const encodedEmail = encodeURIComponent(manager.email.toLowerCase());
       const response = await axios.put(
-        `${BASE_URL}/api/manager_update/${encodedEmail}/`,
+        `${BASE_URL}/api/user_update/${encodedEmail}/`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -123,7 +123,7 @@ const ManagerProfile = () => {
       }
 
       const response = await axios.put(
-        `${BASE_URL}/api/manager_update/${encodedEmail}/`,
+        `${BASE_URL}/api/user_update/${encodedEmail}/`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
