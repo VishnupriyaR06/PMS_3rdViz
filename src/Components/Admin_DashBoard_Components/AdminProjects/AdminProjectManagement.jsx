@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
-import AddPhaseModal from "/src/Components/Admin_DashBoard_Components/AddPhaseModal.jsx";
-import ProjectDetails from "/src/Components/Admin_DashBoard_Components/AdminProjectsDetails.jsx";
-
-
+import AddPhaseModal from "/src/Components/Admin_DashBoard_Components/AdminCategory/AddPhaseModal.jsx";
+import ProjectDetails from "/src/Components/Admin_DashBoard_Components/AdminProjects/AdminProjectsDetails.jsx";
 
 /* ------------------------- Project Card ------------------------- */
 const ProjectCard = ({ project, onClick }) => {
@@ -43,7 +41,7 @@ const ProjectCard = ({ project, onClick }) => {
       onClick={() => onClick(project)}
       className="relative p-6 border rounded-xl bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-all duration-300"
     >
-      {/* ✅ Status badge (right side top) */}
+      {/* ✅ Status badge */}
       <span
         className={`absolute top-3 right-3 px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(
           project.status
@@ -52,7 +50,7 @@ const ProjectCard = ({ project, onClick }) => {
         {project.status || "Pending"}
       </span>
 
-      {/* ✅ Priority badge (below status badge) */}
+      {/* ✅ Priority badge */}
       <span
         className={`absolute top-12 right-3 px-3 py-1 text-xs font-semibold rounded-full ${getPriorityColor(
           project.priority
@@ -71,7 +69,7 @@ const ProjectCard = ({ project, onClick }) => {
         {project.description || "No description available."}
       </p>
 
-      {/* Gradient Button */}
+      {/* Button */}
       <button
         onClick={() => onClick(project)}
         className="mt-6 w-full bg-linear-to-r from-pink-500 to-orange-400 text-white py-2 rounded-lg font-semibold hover:opacity-90 transition"
@@ -87,7 +85,6 @@ const ProjectForm = ({ onAddProjectClick }) => {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [tasks, setTasks] = useState([]);
 
   const BASE_API = import.meta.env.VITE_API_URL;
 
@@ -106,6 +103,7 @@ const ProjectForm = ({ onAddProjectClick }) => {
     fetchProjects();
   }, []);
 
+  /* ✅ Fetch all projects */
   const fetchProjects = async () => {
     if (loading) return;
     setLoading(true);
@@ -119,6 +117,16 @@ const ProjectForm = ({ onAddProjectClick }) => {
     }
   };
 
+  /* ✅ Fetch tasks for a selected project (Option 1 fix) */
+  const getTasksForProject = async (projectId) => {
+    try {
+      const res = await axios.get(`${BASE_API}/api/projects/${projectId}/tasks/`);
+      return res.data; // Return list of tasks
+    } catch (err) {
+      console.error("Failed to fetch tasks for project:", err);
+      return []; // Return empty array on error
+    }
+  };
 
   return (
     <div className="p-8">
@@ -127,7 +135,9 @@ const ProjectForm = ({ onAddProjectClick }) => {
           <h1 className="text-3xl font-bold bg-linear-to-r from-pink-500 via-orange-400 to-yellow-400 bg-clip-text text-transparent">
             Project Management
           </h1>
-          <p className="text-gray-600 mt-2 text-sm">Manage all projects in one place.</p>
+          <p className="text-gray-600 mt-2 text-sm">
+            Manage all projects in one place.
+          </p>
 
           <div className="absolute top-15 mt-3 h-0.5 w-full bg-linear-to-r from-pink-200 via-pink-200 to-transparent" />
         </div>
@@ -141,7 +151,9 @@ const ProjectForm = ({ onAddProjectClick }) => {
       </div>
 
       {projects.length === 0 ? (
-        <p className="text-gray-500 italic text-center">No projects created yet.</p>
+        <p className="text-gray-500 italic text-center">
+          No projects created yet.
+        </p>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((proj, i) => (
@@ -150,13 +162,17 @@ const ProjectForm = ({ onAddProjectClick }) => {
         </div>
       )}
 
+      {/* ✅ Show ProjectDetails modal when a project is selected */}
       {selectedProject && (
         <ProjectDetails
           project={selectedProject}
           onClose={() => setSelectedProject(null)}
-          // getTasksForProject={getTasksForProject}
+          getTasksForProject={getTasksForProject} // ✅ fixed reference
         />
+       
       )}
+
+     
     </div>
   );
 };

@@ -1,57 +1,57 @@
+
 import { useState, useMemo } from "react";
 import {
   FaProjectDiagram,
   FaUsers,
   FaLayerGroup,
+  FaTasks,
 } from "react-icons/fa";
+
 import { motion, AnimatePresence } from "framer-motion";
 
-import Project from "/src/Components/Admin_DashBoard_Components/AdminProjectManagement";
+import Project from "/src/Components/Admin_DashBoard_Components/AdminProjects/AdminProjectManagement.jsx";
 import Users from "/src/Components/Admin_DashBoard_Components/AdminUserManagement";
-import Category from "/src/Components/Admin_DashBoard_Components/AdminCategoryManagement";
+import Category from "/src/Components/Admin_DashBoard_Components/AdminCategory/AdminCategoryManagement.jsx";
+import Admin_Profile from "/src/Components/Admin_DashBoard_Components/Admin_Profile.jsx";
+
 import Navbar from "/src/Components/Reusable_Components/Navbar";
+import AddProjectModal from "/src/Components/Admin_DashBoard_Components/AdminProjects/AddProjectModal.jsx";
+import Task from "/src/Components/Admin_DashBoard_Components/AdminTask/Task.jsx";
+// import { FaTasks } from "react-icons/fa";
 
-import Profile from "/src/Components/Manager_DashBoard_Components/Manager_Profile.jsx"
-
-import AddProjectModal from "/src/Components/Admin_DashBoard_Components/AddProjectModal";
 
 const AdminDashboardWrapper = () => {
   const [activeSection, setActiveSection] = useState("Project");
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
 
-  const admin_role = localStorage.getItem("role")
-  console.log("admin_role", admin_role)
-
-  // ✅ Navigation items configuration
+  // ✅ Removed Profile from navItems
   const navItems = useMemo(
     () => [
+      { name: "Dashboard", icon: <FaTasks /> },
       { name: "Project", icon: <FaProjectDiagram /> },
       { name: "Users", icon: <FaUsers /> },
       { name: "Category", icon: <FaLayerGroup /> },
+      { name: "Task", icon: <FaTasks /> },
+    
     ],
-    []
   );
 
-  // ✅ Handlers to open modals (passed to Project)
   const handleOpenProjectModal = () => setShowAddProjectModal(true);
   const handleCloseProjectModal = () => setShowAddProjectModal(false);
-  const handleProjectCreated = () => {
-    setShowAddProjectModal(false);
-  };
+  const handleProjectCreated = () => setShowAddProjectModal(false);
 
-  // ✅ Section content mapping
+  // ✅ Map sections including Profile (but not in navbar)
   const sectionComponents = {
-    Project: (
-      <Project onAddProjectClick={handleOpenProjectModal} />
-    ),
+    Project: <Project onAddProjectClick={handleOpenProjectModal} />,
     Users: <Users />,
     Category: <Category />,
-    Profile: <Profile />,
+    Task: <Task />,
+    Profile: <Admin_Profile />,
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-100 via-orange-50 to-yellow-100 text-gray-900 transition-all duration-300">
-      {/* ✅ Top Navbar */}
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-100 via-orange-50 to-yellow-100 text-gray-900">
+      
       <Navbar
         title="Admin Panel"
         navItems={navItems}
@@ -60,9 +60,9 @@ const AdminDashboardWrapper = () => {
         setActiveSection={setActiveSection}
       />
 
-      {/* ✅ Content Area */}
       <main className="flex-1 p-6 overflow-y-auto">
-        <div className="bg-white/90 rounded-3xl shadow-xl border border-pink-200 h-full transition-all duration-300">
+        <div className="bg-white/90 rounded-3xl shadow-xl border border-pink-200 h-full">
+
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSection}
@@ -75,17 +75,17 @@ const AdminDashboardWrapper = () => {
               {sectionComponents[activeSection]}
             </motion.div>
           </AnimatePresence>
+
         </div>
       </main>
 
-      {/* ✅ Global Modals controlled from parent */}
+      {/* Global Add Project Modal */}
       {showAddProjectModal && (
         <AddProjectModal
           onClose={handleCloseProjectModal}
           onProjectCreated={handleProjectCreated}
         />
       )}
-
     </div>
   );
 };

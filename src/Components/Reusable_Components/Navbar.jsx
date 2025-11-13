@@ -2,8 +2,6 @@
 import { useState, useRef, useEffect } from "react";
 import { FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";   // ✅ Added
-// import EmployeeProfile from "../../Components/User_Dashboard_Components/EmployeeProfile";
 
 const Navbar = ({
   title = "User Panel",
@@ -17,14 +15,10 @@ const Navbar = ({
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const dropdownRef = useRef(null);
 
-  const navigate = useNavigate();   // ✅ Initialize navigate
-
-  // console.log("Navbar received navItems:", navItems);
-
-  // ✅ Close dropdown on outside click
+  // ✅ click outside dropdown close
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setIsDropdownOpen(false);
       }
     };
@@ -32,68 +26,64 @@ const Navbar = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ✅ Handle Logout using navigate
+  // ✅ Logout handler
   const handleLogout = () => {
     const role = localStorage.getItem("role");
     localStorage.clear();
 
-    if (role === "Admin" || role === "Manager") {
-      navigate("/admin-login");
-    } else if (role === "employee" || role === "TeamLeader") {
-      navigate("/employee-login");
-    } else {
-      navigate("/");
+    // redirect based on role
+    switch (role) {
+      case "Admin":
+      case "Manager":
+        window.location.href = "/admin-login";
+        break;
+      case "employee":
+      case "TeamLeader":
+        window.location.href = "/employee-login";
+        break;
+      default:
+        window.location.href = "/";
+        break;
     }
   };
 
+  // ✅ Profile from dropdown — switch dashboard section instead of routing
   const handleProfile = () => {
     setIsDropdownOpen(false);
-
-    if (role === "Employee" && setActiveSection) {
-      setActiveSection("Profile");
-      return;
-    }
-
-    if (role === "Admin" && setActiveSection) {
-      setActiveSection("Profile");
-      return;
-    }
-
-    if (role === "Manager" && setActiveSection) {
-      setActiveSection("Profile");
-      return;
-    }
+    setActiveSection("Profile"); // ✅ parent section change
   };
 
 
   return (
     <>
       <nav className="w-full bg-white/90 backdrop-blur-md border-b border-pink-100 shadow-md flex items-center justify-between px-6 sm:px-8 py-3 sticky top-0 z-50">
-        {/* ✅ Left: Title */}
+
+        {/* Left Title */}
         <h1
           className={`text-2xl font-extrabold bg-gradient-to-r ${gradient} bg-clip-text text-transparent tracking-tight`}
         >
           {title}
         </h1>
 
-        {/* ✅ Middle: Navigation Buttons */}
+        {/* Middle Nav Items */}
         <div className="flex gap-6">
-          {navItems.map((navItem, i) => (
+          {navItems.map((item, index) => (
             <button
-              key={i}
-              onClick={() => setActiveSection(navItem.name)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-base font-semibold transition-all duration-200 ${activeSection === navItem.name
+              key={index}
+              onClick={() => setActiveSection(item.name)}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-base font-semibold transition-all duration-200 ${
+                activeSection === item.name
                   ? "text-pink-600 border-b-2 border-pink-600"
                   : "text-gray-700 hover:text-pink-600"
                 }`}
             >
-              <span className="text-lg">{navItem.icon}</span>
-              {navItem.name}
+              <span className="text-lg">{item.icon}</span>
+              {item.name}
             </button>
           ))}
         </div>
 
-        {/* ✅ Right: Profile Dropdown */}
+        {/* Right Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen((prev) => !prev)}
@@ -117,8 +107,9 @@ const Navbar = ({
                 >
                   <FaUserCircle className="text-pink-500" /> Profile
                 </button>
+
                 <button
-                  onClick={handleLogout}
+                  onClick={() => setShowLogoutConfirm(true)}
                   className="flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 hover:bg-pink-50 transition-all duration-150 text-sm font-medium border-t border-gray-100"
                 >
                   <FaSignOutAlt className="text-red-500" /> Logout
@@ -129,7 +120,7 @@ const Navbar = ({
         </div>
       </nav>
 
-      {/* ✅ Logout Confirmation Modal */}
+      {/* Logout Confirmation */}
       <AnimatePresence>
         {showLogoutConfirm && (
           <motion.div
@@ -159,6 +150,7 @@ const Navbar = ({
                 >
                   Cancel
                 </button>
+
                 <button
                   onClick={handleLogout}
                   className="px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 text-white font-semibold shadow-md hover:opacity-90 transition-all"

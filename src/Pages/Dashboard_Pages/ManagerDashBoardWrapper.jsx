@@ -6,19 +6,18 @@ import {
 } from "react-icons/fa";
 import Navbar from "/src/Components/Reusable_Components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
-import Profile from "/src/Components/Manager_DashBoard_Components/Manager_Profile.jsx";
-import Project from "/src/Components/Admin_DashBoard_Components/AdminProjectManagement";
-import UserManagement from "/src/Components/Admin_DashBoard_Components/AdminUserManagement";
-import Category from "/src/Components/Admin_DashBoard_Components/AdminCategoryManagement";
+import Project from "/src/Components/Admin_DashBoard_Components/AdminProjects/AdminProjectManagement.jsx";
+import UserManagement from "/src/Components/Admin_DashBoard_Components/AdminUserManagement.jsx";
+import Category from "/src/Components/Admin_DashBoard_Components/AdminCategory/AdminCategoryManagement.jsx";
 
-import AddProjectModal from "/src/Components/Admin_DashBoard_Components/AddProjectModal";
-
+import AddProjectModal from "/src/Components/Admin_DashBoard_Components/AdminProjects/AddProjectModal.jsx";
+// import Task from "/src/Components/Manager_Dashboard_Components/Task.jsx";   // ADD THIS
+import ManagerProfile from "/src/Components/Manager_DashBoard_Components/Manager_Profile.jsx"; // ADD THIS
 
 const ManagerDashboardWrapper = () => {
   const [activeSection, setActiveSection] = useState("Project");
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
 
-  const manager_role = localStorage.getItem("role")
 
     // ✅ Handlers to open modals (passed to Project)
   const handleOpenProjectModal = () => setShowAddProjectModal(true);
@@ -29,26 +28,27 @@ const ManagerDashboardWrapper = () => {
 
 const navItems = [
   { name: "Project", icon: <FaProjectDiagram /> },
-  { name: "Users", icon: <FaUser /> },
+  { name: "User", icon: <FaUser /> },
   {name: "Category",icon:<FaLayerGroup />}
 ];
 
-  
-   const sectionComponents = {
-  Project: <Project onAddProjectClick={handleOpenProjectModal} />,
-  Users: <UserManagement />,
-  Category:<Category/>,
-  Profile: <Profile/>,
+  // ✅ Map section names to components
+ const sectionComponents = {
+  Project: <Project onAddProjectClick={handleOpenProjectModal} />, // FIXED
+  // Task: <Task />,
+  User:<UserManagement/>,
+  Profile: <ManagerProfile />,
+  Category: <Category />
 };
-
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-pink-100 via-orange-50 to-yellow-100 text-gray-900">
+      
       {/* ✅ Top Navbar */}
       <Navbar
         title="Manager Panel"
         navItems={navItems}
-        role={manager_role}
+        // role={manager_role}
         activeSection={activeSection}
         setActiveSection={setActiveSection}
         gradient="from-pink-500 to-orange-400"
@@ -56,8 +56,9 @@ const navItems = [
 
       {/* ✅ Main Content */}
       <main className="flex-1 overflow-y-auto p-6">
-        <div className="bg-white/90 rounded-3xl shadow-2l border border-pink-200 h-full transition-all duration-300">
-        <AnimatePresence mode="wait">
+        <div className="bg-white/90 rounded-3xl shadow-xl border border-pink-200 h-full transition-all duration-300">
+
+          <AnimatePresence mode="wait">
             <motion.div
               key={activeSection}
               initial={{ opacity: 0, y: 20 }}
@@ -66,10 +67,11 @@ const navItems = [
               transition={{ duration: 0.35, ease: "easeInOut" }}
               className="min-h-[80vh]"
             >
+              {/* ✅ Render selected section */}
               {sectionComponents[activeSection]}
             </motion.div>
           </AnimatePresence>
-          {/* {renderContent()} */}
+
         </div>
       </main>
 

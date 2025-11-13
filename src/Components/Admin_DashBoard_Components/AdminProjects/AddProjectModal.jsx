@@ -37,6 +37,7 @@ export default function AddProjectModal({ onClose, onProjectCreated }) {
     }));
   };
 
+  // ✅ Fetch categories and users
   useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/api/Category_list/")
@@ -52,6 +53,7 @@ export default function AddProjectModal({ onClose, onProjectCreated }) {
       .catch((err) => console.error("User fetch error:", err));
   }, []);
 
+  // ✅ Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -68,13 +70,29 @@ export default function AddProjectModal({ onClose, onProjectCreated }) {
     setError("");
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/project_create/", formData);
-      // alert("✅ Project Created Successfully!");
+      // ✅ Ensure correct data format (username instead of ID)
+      const payload = {
+        ...formData,
+        project_manager: formData.project_manager, // username
+      };
+
+      const res = await axios.post(
+        "http://127.0.0.1:8000/api/project_create/",
+        payload
+      );
+
+      if (res.data.msg === "user not found") {
+        setError("❌ User not found in backend");
+        setLoading(false);
+        return;
+      }
+
+      alert("✅ Project Created Successfully!");
       onProjectCreated();
       onClose();
     } catch (err) {
-      alert("❌ Creation failed");
-      console.error(err);
+      console.error("Project creation failed:", err);
+      setError("❌ Failed to create project. Check console/logs.");
     } finally {
       setLoading(false);
     }
@@ -160,7 +178,6 @@ export default function AddProjectModal({ onClose, onProjectCreated }) {
                   className="w-full border rounded-xl px-4 py-3"
                 >
                   <option value="">Select Category</option>
-
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.name}>
                       {cat.name}
@@ -181,15 +198,16 @@ export default function AddProjectModal({ onClose, onProjectCreated }) {
               >
                 <option value="">Select Manager</option>
 
+                {/* ✅ send username instead of ID */}
                 {users.map((user) => (
                   <option key={user.id} value={user.username}>
-                    {user.username || user.name || user.email}
+                    {user.username}
                   </option>
                 ))}
               </select>
             </div>
 
-            {error && <p className="text-red-500">{error}</p>}
+            {error && <p className="text-red-500 font-medium">{error}</p>}
           </form>
 
           {/* RIGHT SIDE - Calendar + Button */}
@@ -205,7 +223,6 @@ export default function AddProjectModal({ onClose, onProjectCreated }) {
               />
             </div>
 
-            {/* ✅ Button moved here */}
             <button
               form="projectForm"
               type="submit"
