@@ -27,7 +27,7 @@ const AdminDashboardWrapper = () => {
   // ✅ Removed Profile from navItems
   const navItems = useMemo(
     () => [
-      { name: "Dashboard", icon: <FaTasks /> },
+      // { name: "Dashboard", icon: <FaTasks /> },
       { name: "Project", icon: <FaProjectDiagram /> },
       { name: "Users", icon: <FaUsers /> },
       { name: "Category", icon: <FaLayerGroup /> },
@@ -55,7 +55,7 @@ const AdminDashboardWrapper = () => {
       <Navbar
         title="Admin Panel"
         navItems={navItems}
-        role={admin_role}
+        // role={admin_role}
         activeSection={activeSection}
         setActiveSection={setActiveSection}
       />
