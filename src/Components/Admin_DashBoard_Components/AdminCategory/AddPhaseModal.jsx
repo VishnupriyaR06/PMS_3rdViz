@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
@@ -6,26 +5,47 @@ import axios from "axios";
 export default function AddPhaseModal({ show, categoryName, onClose }) {
   const [phaseName, setPhaseName] = useState("");
   const [phaseDescription, setPhaseDescription] = useState("");
+  const [loading, setLoading] = useState(false);
 
   if (!show) return null;
 
   const handleCreatePhase = async (e) => {
     e.preventDefault();
 
+    if (!phaseName.trim() || !phaseDescription.trim()) {
+      alert("❗ All fields are required.");
+      return;
+    }
+
     try {
-      await axios.post("http://127.0.0.1:8000/api/create_phase_template/", {
-        category: categoryName,
-        name: phaseName,
-        description: phaseDescription,
-      });
+      setLoading(true);
+
+      const res = await axios.post(
+        "http://127.0.0.1:8000/api/create_phase_template/",
+        {
+          category: categoryName,
+          name: phaseName.trim(),
+          description: phaseDescription.trim(),
+        }
+      );
+
+      console.log("Response:", res.data);
 
       alert("✅ Phase created successfully!");
+
       setPhaseName("");
       setPhaseDescription("");
       onClose();
     } catch (error) {
-      console.error(error);
+      console.error("Error creating phase:", error);
+
+      if (error.response) {
+        console.log(error.response.data);
+      }
+
       alert("❌ Failed to create phase.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,6 +82,7 @@ export default function AddPhaseModal({ show, categoryName, onClose }) {
               type="button"
               onClick={onClose}
               className="px-6 py-2 border rounded"
+              disabled={loading}
             >
               Cancel
             </button>
@@ -69,8 +90,9 @@ export default function AddPhaseModal({ show, categoryName, onClose }) {
             <button
               type="submit"
               className="px-6 py-2 bg-purple-600 text-white rounded"
+              disabled={loading}
             >
-              Save Phase
+              {loading ? "Saving..." : "Save Phase"}
             </button>
           </div>
         </form>

@@ -6,7 +6,7 @@ import {
   FaTachometerAlt,
   FaProjectDiagram,
   FaFileAlt,
-  FaUserCircle,
+  // FaUserCircle,
 } from "react-icons/fa";
 import Navbar from "/src/Components/Reusable_Components/Navbar.jsx";
 import EmployeeProfile from "../../Components/User_Dashboard_Components/EmployeeProfile";

@@ -8,7 +8,7 @@ const UserProjectDetail = ({ project }) => {
           {project.project_name || "Untitled Project"}
         </h1>
         
- {/* Name Card */}
+      {/* Name Card */}
           <div className="bg-gray-50 p-5 rounded-xl shadow-md border border-gray-200">
             <p className="text-lg text-gray-800 font-medium">Name</p>
             <p className="text-gray-600 text-sm mt-2">
@@ -27,13 +27,13 @@ const UserProjectDetail = ({ project }) => {
         {/* Grid Layout for Project Details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-          {/* Team Card */}
+          {/* Team Card
           <div className="bg-gray-50 p-5 rounded-xl shadow-md border border-gray-200">
             <p className="text-lg text-gray-800 font-medium">Team</p>
             <p className="text-gray-600 text-sm mt-2">
               {project.team || "Not assigned"}
             </p>
-          </div>
+          </div> */}
 
           {/* Status Card */}
           <div className="bg-gray-50 p-5 rounded-xl shadow-md border border-gray-200">
@@ -59,16 +59,36 @@ const UserProjectDetail = ({ project }) => {
             </p>
           </div>
 
-          {/* Members Card */}
+        {/* Members Card */}
+<div className="bg-gray-50 p-5 rounded-xl shadow-md border border-gray-200">
+  <p className="text-lg text-gray-800 font-medium">Members</p>
+
+  {project.project_manager ? (
+  <div className="text-gray-600 text-sm mt-2">
+    <p><strong>Role:</strong> Project Manager</p>
+    <p><strong>Name:</strong> {project.project_manager.project_manager}</p>
+    <p><strong>Email:</strong> {project.project_manager.email}</p>
+  </div>
+) : (
+  <p>No members assigned</p>
+)}
+
+</div>
+
+           {/* Category Card */}
           <div className="bg-gray-50 p-5 rounded-xl shadow-md border border-gray-200">
-            <p className="text-lg text-gray-800 font-medium">Members</p>
+            <p className="text-lg text-gray-800 font-medium">Category</p>
             <p className="text-gray-600 text-sm mt-2">
-              {project.members && project.members.length > 0
-                ? project.members.join(", ")
-                : "No members assigned"}
+              {project.category || "Not assigned"}
             </p>
           </div>
-
+ {/* priority  Card */}
+          <div className="bg-gray-50 p-5 rounded-xl shadow-md border border-gray-200">
+            <p className="text-lg text-gray-800 font-medium">Priority </p>
+            <p className="text-gray-600 text-sm mt-2">
+              {project.priority || "Not assigned"}
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -166,69 +166,90 @@ const UserMainPage = () => {
           </p>
         </div>
       ) : (
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project, index) => (
-            <div
-              key={project.id || index}
-              onClick={() => setSelectedProject(project)}
-              className="group cursor-pointer relative p-6 bg-white/80 backdrop-blur-lg border border-pink-100 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-all duration-500"
-            >
-              <div className="relative z-10">
-                <div className="flex items-start justify-between mb-4">
-                  <h2 className="text-xl font-bold text-gray-800 group-hover:text-pink-600 transition-colors line-clamp-2">
-                    {project.name || project.project_name || "Untitled Project"}
-                  </h2>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${getPriorityColor(
-                      project.priority
-                    )}`}
-                  >
-                    {project.priority || "Normal"}
-                  </span>
-                </div>
+    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+  {projects.map((project, index) => (
+    <div
+      key={project.id || index}
+      onClick={() => setSelectedProject(project)}
+      className="group cursor-pointer relative p-6 bg-white/80 backdrop-blur-lg border border-pink-100 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-all duration-500"
+    >
+      <div className="relative z-10">
 
-                <p className="text-gray-600 text-sm line-clamp-3 mb-6">
-                  {project.description || "No description available."}
-                </p>
-
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <FaTag className="text-purple-500" />
-                    <span>{project.category || "Uncategorized"}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <FaCalendar className="text-blue-500" />
-                    <span>
-                      {formatDate(project.start_date)} •{" "}
-                      {formatDate(project.end_date)}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <FaChartLine className="text-orange-500" />
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                        project.status
-                      )}`}
-                    >
-                      {project.status || "Unknown"}
-                    </span>
-                  </div>
-
-                  <div className="text-xs text-gray-500">
-                    Created: {formatDate(project.create_at)}
-                  </div>
-                </div>
-              </div>
-
-              <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-pink-200 transition"></div>
-            </div>
-          ))}
+        {/* Title + Priority */}
+        <div className="flex items-start justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-800 group-hover:text-pink-600 transition-colors line-clamp-2">
+            {project.name || project.project_name || "Untitled Project"}
+          </h2>
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-medium ${getPriorityColor(
+              project.priority
+            )}`}
+          >
+            {project.priority || "Normal"}
+          </span>
         </div>
-      )}
+
+        {/* Description */}
+        <p className="text-gray-600 text-sm line-clamp-3 mb-6">
+          {project.description || "No description available."}
+        </p>
+
+        {/* Members Section */}
+        <div className="mb-4">
+          <h3 className="font-semibold text-gray-700 text-sm">Members</h3>
+
+          {project.project_manager ? (
+            <div className="text-gray-600 text-sm">
+              <p><strong>Role:</strong> Project Manager</p>
+              <p>
+                <strong>Name:</strong>{" "}
+                {project.project_manager["assigend to"] || "Not provided"}
+              </p>
+              <p>
+                <strong>Email:</strong>{" "}
+                {project.project_manager.email || "Not provided"}
+              </p>
+            </div>
+          ) : (
+            <p className="text-gray-500 text-sm">No members assigned</p>
+          )}
+        </div>
+
+        {/* Dates */}
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <FaCalendar className="text-blue-500" />
+          <span>
+            {formatDate(project.start_date)} •{" "}
+            {formatDate(project.end_date)}
+          </span>
+        </div>
+
+        {/* Status + Created */}
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-4">
+          <div className="flex items-center gap-2">
+            <FaChartLine className="text-orange-500" />
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                project.status
+              )}`}
+            >
+              {project.status || "Unknown"}
+            </span>
+          </div>
+
+          <div className="text-xs text-gray-500">
+            Created: {formatDate(project.create_at)}
+          </div>
+        </div>
+
+      </div>
+
+      {/* Hover Border */}
+      <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-pink-200 transition"></div>
+    </div>
+  ))}
+</div>
+)}
     </div>
   );
 };
