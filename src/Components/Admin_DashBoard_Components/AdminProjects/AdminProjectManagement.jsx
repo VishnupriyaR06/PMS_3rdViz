@@ -39,11 +39,14 @@ const ProjectCard = ({ project, onClick }) => {
   return (
     <div
       onClick={() => onClick(project)}
-      className="relative p-6 border rounded-xl bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-all duration-300"
+      className="group relative p-6 border border-gray-200 rounded-2xl bg-white shadow-sm hover:shadow-2xl hover:-translate-y-2 cursor-pointer transition-all duration-300 overflow-hidden"
     >
+      {/* Gradient border effect on hover */}
+      <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-orange-400 opacity-0 group-hover:opacity-5 transition-opacity duration-300 rounded-2xl"></div>
+      
       {/* ✅ Status badge */}
       <span
-        className={`absolute top-3 right-3 px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+        className={`absolute top-4 right-4 px-3 py-1.5 text-xs font-semibold rounded-full ${getStatusColor(
           project.status
         )}`}
       >
@@ -52,27 +55,40 @@ const ProjectCard = ({ project, onClick }) => {
 
       {/* ✅ Priority badge */}
       <span
-        className={`absolute top-12 right-3 px-3 py-1 text-xs font-semibold rounded-full ${getPriorityColor(
+        className={`absolute top-16 right-4 px-3 py-1.5 text-xs font-semibold rounded-full ${getPriorityColor(
           project.priority
         )}`}
       >
         {(project.priority || "—").toUpperCase()}
       </span>
 
+      {/* Project Icon/Initial */}
+      <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-orange-400 rounded-xl flex items-center justify-center mb-4 shadow-md">
+        <span className="text-white font-bold text-lg">
+          {(project.project_name || project.name || "P").charAt(0).toUpperCase()}
+        </span>
+      </div>
+
       {/* Name */}
-      <p className="text-lg font-bold text-gray-900 mt-2 ">
-        {project.project_name || project.name || "—"}
-      </p>
+      <h3 className="text-xl font-bold text-gray-900 mt-2 pr-20 line-clamp-1">
+        {project.project_name || project.name || "Untitled Project"}
+      </h3>
 
       {/* Description */}
-      <p className="mt-3 text-sm text-gray-900 leading-relaxed line-clamp-3">
-        {project.description || "No description available."}
+      <p className="mt-3 text-sm text-gray-600 leading-relaxed line-clamp-3 min-h-[60px]">
+        {project.description || "No description available for this project."}
       </p>
+
+      {/* Divider */}
+      <div className="my-4 border-t border-gray-100"></div>
 
       {/* Button */}
       <button
-        onClick={() => onClick(project)}
-        className="mt-6 w-full bg-linear-to-r from-pink-500 to-orange-400 text-white py-2 rounded-lg font-semibold hover:opacity-90 transition"
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick(project);
+        }}
+        className="mt-2 w-full bg-gradient-to-r from-pink-500 to-orange-400 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
       >
         View Details
       </button>
@@ -118,33 +134,60 @@ const ProjectForm = ({ onAddProjectClick }) => {
   };
 
   return (
-    <div className="p-8">
-      <div className="relative flex justify-between items-center mb-20">
-        <div>
-          <h1 className="text-3xl font-bold bg-linear-to-r from-pink-500 via-orange-400 to-yellow-400 bg-clip-text text-transparent">
-            Project Management
-          </h1>
-          <p className="text-gray-600 mt-2 text-sm">
-            Manage all projects in one place.
-          </p>
+    <div className="p-6 lg:p-8">
+      {/* Header Section */}
+      <div className="relative mb-16">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6 mb-8">
+          <div className="flex-1">
+            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400 bg-clip-text text-transparent">
+              Project Management
+            </h1>
+            <p className="text-gray-600 mt-3 text-base max-w-2xl">
+              Manage all your projects in one centralized dashboard. Track progress, assign tasks, and monitor project health.
+            </p>
+          </div>
 
-          <div className="absolute top-15 mt-3 h-0.5 w-full bg-linear-to-r from-pink-200 via-pink-200 to-transparent" />
+          <button
+            onClick={onAddProjectClick}
+            className="bg-gradient-to-r from-pink-500 to-orange-400 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Add New Project
+          </button>
         </div>
 
-        <button
-          onClick={onAddProjectClick}
-          className="bg-linear-to-r from-pink-500 to-orange-400 text-white px-4 py-2 rounded-lg shadow hover:opacity-90 transition"
-        >
-          + Add Project
-        </button>
+        {/* Decorative Gradient Line */}
+        <div className="absolute -bottom-4 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400 rounded-full opacity-20"></div>
+        <div className="absolute -bottom-4 left-0 w-1/3 h-1 bg-gradient-to-r from-pink-500 to-orange-400 rounded-full"></div>
       </div>
 
-      {projects.length === 0 ? (
-        <p className="text-gray-500 italic text-center">
-          No projects created yet.
-        </p>
+      {/* Projects Grid */}
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+        </div>
+      ) : projects.length === 0 ? (
+        <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+          <div className="w-24 h-24 bg-gradient-to-r from-pink-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-700 mb-2">No Projects Yet</h3>
+          <p className="text-gray-500 mb-6 max-w-md mx-auto">
+            Get started by creating your first project to organize tasks and track progress.
+          </p>
+          <button
+            onClick={onAddProjectClick}
+            className="bg-gradient-to-r from-pink-500 to-orange-400 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300"
+          >
+            Create Your First Project
+          </button>
+        </div>
       ) : (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
           {projects.map((proj, i) => (
             <ProjectCard key={i} project={proj} onClick={setSelectedProject} />
           ))}
@@ -158,10 +201,7 @@ const ProjectForm = ({ onAddProjectClick }) => {
           onClose={() => setSelectedProject(null)}
           getTasksForProject={getTasksForProject} // ✅ fixed reference
         />
-       
       )}
-
-     
     </div>
   );
 };
